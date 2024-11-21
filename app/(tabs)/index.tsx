@@ -1,8 +1,25 @@
 import { Text, View, ScrollView, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useState, useEffect } from "react";
+import { graphQuery } from "@/lib/shopifyQueries";
 
 export default function Index() {
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try{
+                 const data = await graphQuery();
+                 console.log(typeof data.model.products, products);
+                 setProducts(data.model.products);
+            }catch(error){
+              console.error(error);
+            }
+        };
+        fetchProducts();
+    }, []);
+
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView
@@ -19,6 +36,14 @@ export default function Index() {
           <Ionicons name="chatbox-outline" size={28} color="#82bc00" />
           </TouchableOpacity> 
         </View>
+
+        <ScrollView contentContainerStyle={{ height: '100%' }}>
+        {products && products.map((product) => (
+          <View key={product.id}>
+            <Text>{product.title}</Text>
+          </View>          
+          ))}
+        </ScrollView>
       </ScrollView>
     </SafeAreaView>
   );
