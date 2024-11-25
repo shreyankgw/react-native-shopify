@@ -85,6 +85,7 @@ export default function Index() {
           {products && products.map((product) => (
           <View key={product.id}>
             <Text>{product.title}</Text>
+            <Image source={{ uri: product.images.edges[0].node.url }} className="w-full h-[200px]" resizeMode="contain" />
           </View>          
           ))}
           </FadeIn>
