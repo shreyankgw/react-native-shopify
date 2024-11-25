@@ -7,15 +7,15 @@ export const menuItems = [
                 items: [
                     {
                        name: '82V Riding Mowers',
-                       link: ''
+                       link: '/collections/82v-riding-mowers'
                     },
                     {
                         name: '82V Snow',
-                        link: ''
+                        link: '/collections/82v-snow'
                     },
                     {
                         name: '82V UTVs',
-                        link: ''
+                        link: '/collections/82v-utvs'
                     }
             ],
             },
@@ -24,7 +24,7 @@ export const menuItems = [
                 items: [
                     {
                         name: '80V Snow',
-                        link: ''
+                        link: '/collections/80v-snow'
                      },
                      {
                          name: '80V Blowers',
@@ -342,5 +342,25 @@ export const menuItems = [
                 link: ''
             }
         ],
+    },
+    {
+        title: 'Parts & Accessories',
+        link: ''
+    },
+    {
+        title: 'Sale',
+        link: ''
+    },
+    {
+        title: 'Contact',
+        link: ''
+    },
+    {
+        title: 'Blogs',
+        link: ''
+    },
+    {
+        title: 'Accessibility',
+        link: ''
     }
 ];

@@ -4,7 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState, useEffect } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 
-import { sampleProductQuery } from "@/lib/shopifyQueries";
+import { storefrontQuery } from "@/lib/shopifyQueries";
 import FadeIn from "@/components/FadeInAnimation";
 import MainMenu from "@/components/MainMenu";
 
@@ -40,8 +40,8 @@ export default function Index() {
     useEffect(() => {
       const fetchProducts = async () => {
           try{
-               const data = await sampleProductQuery();
-               setProducts(data.model.products);
+          const products = await storefrontQuery();
+          setProducts(products);
           }catch(error){
             console.error(error);
           }
@@ -52,27 +52,30 @@ export default function Index() {
   return (
     <SafeAreaView className="bg-white h-full">
        <View
-          className="flex items-center justify-between flex-row flex-wrap w-full px-4 border-b-2 border-gray-200"
+          className="flex items-center justify-between flex-row flex-wrap w-full px-4 border-b-2 border-gray-200 bg-darkPrimary"
         >
           <TouchableOpacity onPress={openDrawer}>
-          <Ionicons name="menu-sharp" size={28} color="#82bc00" />
+          <Ionicons name="menu-sharp" size={28} color="#ffffff" />
           </TouchableOpacity>         
-          <Image source={require("@/assets/images/gw_green.png")} resizeMode="contain" className="w-[180px] h-[70px] flex-1 border-l-2 border-r-2" />
+          <Image source={require("@/assets/images/gw_logo.png")} resizeMode="contain" className="w-[180px] h-[70px]" />
           <TouchableOpacity>
-          <Ionicons name="chatbox-outline" size={28} color="#82bc00" />
+          <Ionicons name="chatbox-outline" size={28} color="#ffffff" />
           </TouchableOpacity> 
         </View>
        <Animated.ScrollView
-           className="absolute top-0 right-0 bottom-0 bg-white shadow-lg" style={[animatedStyle, {width}]}
+           className="absolute top-0 right-0 bottom-0 bg-darkPrimary shadow-lg" style={[animatedStyle, {width}]}
        >
+        <View className="flex flex-row items-center justify-between m-3 p-3">
+        <Image source={require("@/assets/images/gw_logo.png")} resizeMode="contain" className="w-[180px] h-[40px]" />
         <TouchableOpacity
-          className="p-3 self-end m-3"
+          className=""
           onPress={closeDrawer}
         >
-          <Ionicons name="close-circle-sharp" size={40} color="#046a38" />
+          <Ionicons name="close-circle-sharp" size={32} color="#ffffff" />
         </TouchableOpacity>
+        </View>
+        
         <ScrollView className="flex-1 p-4">
-           <Text className="text-xl font-mBold mb-4">Menu</Text>
            <MainMenu />
         </ScrollView>
        </Animated.ScrollView>
