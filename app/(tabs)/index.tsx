@@ -1,5 +1,4 @@
 import { Text, View, ScrollView, Image, TouchableOpacity, Dimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
@@ -55,7 +54,7 @@ export default function Index() {
   }, []);
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <View className="bg-white h-full">
       <ScrollView>
       <View
           className="flex items-center justify-between flex-row flex-wrap w-full px-4 border-b-2 border-gray-200 bg-darkPrimary"
@@ -86,10 +85,9 @@ export default function Index() {
         </ScrollView>
        </Animated.ScrollView>
            
-           <View className="flex flex-row items-center justify-between p-4 gap-4">
-             <FeaturedTab title="Featured" handlePress={() => {}} iconName="pricetags" />
-             <FeaturedTab title="On Sale" handlePress={() => {}} iconName="pricetags" />
-             <FeaturedTab title="Best Sellers" handlePress={() => {}} iconName="pricetags" />
+           <View className="flex flex-row items-center justify-center p-4 gap-2 my-2">
+             <FeaturedTab title="Shop Deals" handlePress={() => router.push("/collections/deals")} iconName="pricetags" size={14} />
+             <FeaturedTab title="Shop Best Sellers" handlePress={() => router.push("/collections/best-sellers")} iconName="flame-sharp" size={14} />
            </View>
          
           <HeroSlider />
@@ -102,6 +100,6 @@ export default function Index() {
           ))}
           </FadeIn>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
