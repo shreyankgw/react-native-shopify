@@ -33,8 +33,6 @@ export default function HeroSlider(){
                                                   handle: ref.node.handle,
                                                   image: ref.node.metafield?.reference.image.url || ''
                                               })));
-                console.log(bannersData);
-                
                 setBanners(bannersData);
             } catch (error) {
                 console.error(error);
