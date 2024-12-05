@@ -3,76 +3,59 @@ export const menuItems = [
         title: 'Shop By Voltage',
         subcategories: [
             {
-                title: '82V - Profressional Landscaper',
-                items: [
-                    {
-                       name: '82V Riding Mowers',
-                       link: '/collections/82v-riding-mowers'
-                    },
-                    {
-                        name: '82V Snow',
-                        link: '/collections/82v-snow'
-                    },
-                    {
-                        name: '82V UTVs',
-                        link: '/collections/82v-utvs'
-                    }
-            ],
-            },
-            {
                 title: '80V',
                 items: [
                     {
-                        name: '80V Snow',
-                        link: '/collections/80v-snow'
+                        name: '80v Snow Throwers',
+                        link: '/collections/80v-snow-throwers'
                      },
                      {
-                         name: '80V Blowers',
-                         link: ''
+                         name: '80v Snow Shovels',
+                         link: '/collections/80v-snow-shovels'
                      },
+                     {
+                        name: '80v Blowers',
+                        link: '/collections/80v-blowers'
+                    },
                      {
                          name: '80V Chainsaws',
-                         link: ''
+                         link: '/collections/80v-chainsaws'
                      },
                      {
                         name: '80V Polesaws',
-                        link: ''
+                        link: '/collections/80v-polesaws'
                     },
                     {
-                        name: '80V E-Transportation',
-                        link: ''
+                        name: '80V Tractors & Vehicles',
+                        link: '/collections/80v-tractors-vehicles'
                     },
                     {
                         name: '80V Hedge Trimmers',
-                        link: ''
-                    },
-                    {
-                        name: '80V Riding Mowers',
-                        link: ''
+                        link: '/collections/80v-hedge-trimmers'
                     },
                     {
                         name: '80V Mowers',
-                        link: ''
+                        link: '/collections/80v-mowers-1'
                     },
                     {
                         name: '80V String Trimmers',
-                        link: ''
+                        link: '/collections/80v-string-trimmers'
                     },
                     {
                         name: '80V Augers',
-                        link: ''
+                        link: '/collections/80v-augers'
                     },
                     {
                         name: '80V Wheelbarrows',
-                        link: ''
+                        link: '/collections/80v-wheelbarrows'
                     },
                     {
                         name: '80V Cultivators',
-                        link: ''
+                        link: '/collections/80v-cultivators'
                     },
                     {
                         name: '80V Batteries & Chargers',
-                        link: ''
+                        link: '/collections/80v-batteries'
                     }
                 ],
             },
@@ -80,28 +63,32 @@ export const menuItems = [
                 title: '60V',
                 items: [
                     {
-                        name: '60V Snow',
-                        link: ''
+                        name: '60V Snow Throwers',
+                        link: '/collections/60v-snow-throwers'
+                     },
+                     {
+                        name: '60V Snow Shovels',
+                        link: '/collections/60v-snow-shovels'
                      },
                      {
                          name: '60V Blowers',
-                         link: ''
+                         link: '/collections/60v-blowers'
                      },
                      {
                          name: '60V Chainsaws',
-                         link: ''
+                         link: '/collections/60v-chainsaws'
                      },
                      {
                         name: '60V Polesaws',
-                        link: ''
+                        link: '/collections/60v-polesaws'
                     },
                     {
-                        name: '60V E-Transportation',
-                        link: ''
+                        name: '60V Tractors & Vehicles',
+                        link: '/collections/60v-tractors-vechicles'
                     },
                     {
                         name: '60V Hedge Trimmers',
-                        link: ''
+                        link: '/collections/60v-hedge-trimmers'
                     },
                     {
                         name: '60V Riding Mowers',
@@ -109,27 +96,27 @@ export const menuItems = [
                     },
                     {
                         name: '60V Mowers',
-                        link: ''
+                        link: '/collections/60v-mowers'
                     },
                     {
                         name: '60V String Trimmers',
-                        link: ''
+                        link: '/collections/60v-string-trimmers'
                     },
                     {
                         name: '60V Augers',
-                        link: ''
+                        link: '/collections/60v-auger'
                     },
                     {
                         name: '60V Wheelbarrows',
-                        link: ''
+                        link: '/collections/60v-wheelbarrows'
                     },
                     {
                         name: '60V Cultivators',
-                        link: ''
+                        link: '/collections/60v-cultivators'
                     },
                     {
                         name: '60V Batteries & Chargers',
-                        link: ''
+                        link: '/collections/60v-batteries'
                     }
                 ],
             },
@@ -137,44 +124,48 @@ export const menuItems = [
                 title: '40V',
                 items: [
                     {
-                        name: '40V Snow',
-                        link: ''
+                        name: '40V Snow Throwers',
+                        link: '/collections/40v-snow-throwers'
+                     },
+                     {
+                        name: '40V Snow Shovels',
+                        link: '/collections/40v-snow-shovels'
                      },
                      {
                          name: '40V Blowers',
-                         link: ''
+                         link: '/collections/40v-blowers'
                      },
                      {
                          name: '40V Chainsaws',
-                         link: ''
+                         link: '/collections/40v-chainsaws'
                      },
                      {
                         name: '40V Polesaws',
-                        link: ''
+                        link: '/collections/40v-polesaws'
                     },
                     {
                         name: '40V Hedge Trimmers',
-                        link: ''
+                        link: '/collections/40v-hedge-trimmers'
                     },
                     {
                         name: '40V Mowers',
-                        link: ''
+                        link: '/collections/40v-mowers'
                     },
                     {
                         name: '40V String Trimmers',
-                        link: ''
+                        link: '/collections/40v-string-trimmers'
                     },
                     {
                         name: '40V Trolling Motors',
-                        link: ''
+                        link: '/collections/40v-trolling-motors'
                     },
                     {
                         name: '40V Cultivators',
-                        link: ''
+                        link: '/collections/40v-cultivators'
                     },
                     {
                         name: '40V Batteries & Chargers',
-                        link: ''
+                        link: '/collections/40v-batteries'
                     }
                 ],
             },
@@ -183,43 +174,43 @@ export const menuItems = [
                 items: [
                     {
                         name: '24V Power Tools',
-                        link: ''
+                        link: '/collections/24v-power-tools'
                      },
                      {
                          name: '24V Vaccums',
-                         link: ''
+                         link: '/collections/24v-vacuum'
                      },
                      {
                          name: '24V Chainsaws',
-                         link: ''
+                         link: '/collections/24v-chainsaws'
                      },
                      {
                         name: '24V/48V Polesaws',
-                        link: ''
+                        link: '/collections/24v-polesaws'
                     },
                     {
                         name: '24V Hedge Trimmers',
-                        link: ''
+                        link: '/collections/24v-hedge-trimmers'
                     },
                     {
                         name: '24V/48V Mowers',
-                        link: ''
+                        link: '/collections/24v-mowers'
                     },
                     {
                         name: '24V/48V String Trimmers',
-                        link: ''
+                        link: '/collections/24v-string-trimmers'
                     },
                     {
                         name: '24V Pressure Washers',
-                        link: ''
+                        link: '/collections/24v-pressure-washers'
                     },
                     {
                         name: '24V Blowers',
-                        link: ''
+                        link: '/collections/24v-blowers'
                     },
                     {
                         name: '24V Batteries & Chargers',
-                        link: ''
+                        link: '/collections/24v-batteries'
                     }
                 ],
             },
@@ -228,43 +219,43 @@ export const menuItems = [
                 items: [
                     {
                         name: 'Corded Pressure Washers',
-                        link: ''
+                        link: '/collections/corded-pressure-washer'
                      },
                      {
                          name: 'Corded Blowers',
-                         link: ''
+                         link: '/collections/corded-blowers'
                      },
                      {
                          name: 'Corded Dethatchers',
-                         link: ''
+                         link: '/collections/corded-dethatcher'
                      },
                      {
                         name: 'Corded Polesaws',
-                        link: ''
+                        link: '/collections/corded-polesaws'
                     },
                     {
                         name: 'Corded Hedge Trimmers',
-                        link: ''
+                        link: '/collections/corded-hedge-trimmers'
                     },
                     {
                         name: 'Corded Mowers',
-                        link: ''
+                        link: '/collections/corded-mowers'
                     },
                     {
                         name: 'Corded String Trimmers',
-                        link: ''
+                        link: '/collections/corded-string-trimmers'
                     },
                     {
                         name: 'Corded Chainsaws',
-                        link: ''
+                        link: '/collections/corded-chainsaw'
                     },
                     {
                         name: 'Corded Snow Shovels',
-                        link: ''
+                        link: '/collections/corded-snow-shovels'
                     },
                     {
                         name: 'Corded Snow Throwers',
-                        link: ''
+                        link: '/collections/corded-snow-throwers'
                     }
                 ],
             },
@@ -275,15 +266,15 @@ export const menuItems = [
         subcategories: [
             {
                 title: 'Batteries & Chargers',
-                link: ''
+                link: '/collections/batteries-1'
             },
             {
                 title: 'Chainsaws',
-                link: ''
+                link: '/collections/chainsaws'
             },
             {
                 title: 'Combos',
-                link: ''
+                link: '/collections/combo'
             },
             {
                 title: 'E-Transportation',
@@ -291,76 +282,76 @@ export const menuItems = [
             },
             {
                 title: 'Hedge Trimmers',
-                link: ''
+                link: '/collections/hedge-trimmers'
             },
             {
                 title: 'Lawn & Garden',
-                link: ''
+                link: '/collections/grass-chore'
             },
             {
                 title: 'Leaf Blowers',
-                link: ''
+                link: '/collections/leaf-blowers'
             },
             {
                 title: 'Mowers',
-                link: ''
+                link: '/collections/lawn-mowers-1'
             },
             {
                 title: 'Pole saws',
-                link: ''
+                link: '/collections/pole-saws'
             },
             {
                 title: 'Power Tools',
-                link: ''
+                link: '/collections/power-tool'
             },
             {
                 title: 'Pressure Washers',
-                link: ''
+                link: '/collections/pressure-washer'
             },
             {
                 title: 'Robotics',
-                link: ''
+                link: '/collections/robotics'
             },
             {
                 title: 'Snow',
-                link: ''
+                link: '/collections/snow'
             },
             {
                 title: 'String Trimmers',
-                link: ''
+                link: '/collections/string-trimmers'
             },
             {
                 title: 'Tractors & Vehicles',
-                link: ''
+                link: '/collections/tractors-and-vehicles'
             },
             {
                 title: 'Trolling Motors',
-                link: ''
+                link: '/collections/trolling-motor'
             },
             {
                 title: 'Vaccums',
-                link: ''
+                link: '/collections/vacuums'
             }
         ],
     },
     {
         title: 'Parts & Accessories',
-        link: ''
+        link: '/collections/parts-accessories'
     },
     {
         title: 'Sale',
-        link: ''
+        link: '/collections/sale'
     },
     {
         title: 'Contact',
-        link: ''
+        link: '/pages/contact-us'
     },
     {
         title: 'Blogs',
-        link: ''
+        link: '/blogs/greenworks-tools-blog'
     },
     {
         title: 'Accessibility',
-        link: ''
+        link: '/pages/accessibility'
     }
 ];
