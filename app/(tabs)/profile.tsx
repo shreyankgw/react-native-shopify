@@ -1,6 +1,7 @@
-import { Text, View } from "react-native";
+import { Text, View, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
 
-export default function About() {
+export default function Profile() {
   return (
     <View
       className="flex-1 items-center justify-center bg-white"
