@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Dimensions, Image, Button, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Dimensions, Image, Button, ScrollView, TouchableOpacity, SafeAreaView } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import Carousel from "react-native-reanimated-carousel";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -68,6 +68,7 @@ export default function Product(){
   }
 
    return(
+    <SafeAreaView className="bg-white flex-1">
     <ScrollView className="bg-white flex-1">
         <View className="relative">
         <TouchableOpacity className="text-3xl font-mBold absolute top-4 left-4 z-10" onPress={() => router.back()}><Ionicons name="arrow-back-outline" size={24} color="black" /></TouchableOpacity>
@@ -82,7 +83,7 @@ export default function Product(){
                     marginHorizontal: 0
                 }}
                 onProgressChange={(progress, absoluteProgress) => setIndex(Math.round(absoluteProgress))}
-                renderItem={({ item }) => <View className="px-4 bg-gray-100"><Image source={{ uri: item }} className="w-full h-full rounded-lg mb-2" resizeMode="contain" /></View>}
+                renderItem={({ item }) => <View className="px-4"><Image source={{ uri: item }} className="w-full h-full rounded-lg mb-2" resizeMode="contain" /></View>}
             />
             {product && product.images.edges.length > 1 && renderDots()}
          </View>
@@ -96,7 +97,12 @@ export default function Product(){
             <View className="my-4">
               <GwtButton title="Add To Cart" handlePress={() => {console.log("Add To Cart Clicked")}} />    
             </View> 
+            <View className="my-4">
+                <Text className="text-lg font-mSemiBold mt-2 text-left">Description</Text>
+                <Text className="text-base font-mLight mt-2 text-left">{product && product.description}</Text>
+            </View>
          </View>
     </ScrollView>
+    </SafeAreaView>
    );
 }

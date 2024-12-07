@@ -1,11 +1,12 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 
 export default function Search(){
     
    return(
+    <SafeAreaView className="bg-white h-full">
     <View>
        <ScrollView className="bg-white h-full"> 
     <View className="flex flex-row items-center justify-between p-4 border-b-2 border-gray-200 w-full">
@@ -20,5 +21,6 @@ export default function Search(){
     </View>
     </ScrollView>
     </View>
+    </SafeAreaView>
    );
 }

@@ -3,12 +3,13 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 export default function TabLayout() {
 
     return (
+        <GestureHandlerRootView>
         <SafeAreaView className="bg-white h-full">
           <Tabs screenOptions={{ tabBarActiveTintColor: "#046a38", tabBarStyle: { backgroundColor: "#ffffff", paddingTop: 5, paddingBottom: 5, height: 60 }, tabBarLabelStyle: { fontFamily: "Montserrat-Bold" } }}>
             <Tabs.Screen name="index" options={{ title: 'Home', headerShown: false, tabBarIcon: ({ color, focused }) => (<View className="relative items-center justify-center h-full mb-1"><Ionicons name={focused ? 'home-sharp' : 'home-outline'} size={24} color={color} /></View> ) }} />
@@ -17,6 +18,7 @@ export default function TabLayout() {
             <Tabs.Screen name="support" options={{ title: 'Support', headerShown: false, tabBarIcon: ({ color, focused }) => (<View className="relative items-center justify-center h-full mb-1"><Ionicons name={focused ? 'chatbox-ellipses-sharp' : 'chatbox-ellipses-outline'} size={24} color={color} /></View>) }} />
             <Tabs.Screen name="profile" options={{ title: 'Profile', headerShown: false, tabBarIcon: ({ color, focused }) => (<View className="relative items-center justify-center h-full mb-1"><Ionicons name={focused ? 'person-sharp' : 'person-outline'} size={24} color={color} /></View>) }} />
         </Tabs>
-        </SafeAreaView>        
+        </SafeAreaView>  
+        </GestureHandlerRootView>      
     );
 }

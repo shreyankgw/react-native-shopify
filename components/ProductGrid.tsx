@@ -27,6 +27,8 @@ export default function ProductGrid({products}: {products: any}) {
                      </TouchableOpacity>   
                   </View>
                   }
+                  onEndReached={() => {console.log("End Reached")}}
+                  onEndReachedThreshold={0.5}
         />
     );
 }
