@@ -26,6 +26,11 @@ interface Product {
     priceRange: {minVariantPrice: {amount: number}};
     compareAtPriceRange: {minVariantPrice: {amount: number}};
     variants: {edges: {node: {sku: string, id: string}}[]};
+    specifications?: {value: string};
+    features?: {references: {nodes: {field: {value: string}}[]}};
+    warranty?: { reference: { field: { reference: { image: { url: string } } } } };
+    faq?: { references: { nodes: { fields: { key: string; value: string }[] }[] } };
+    whatsIncluded?: {value: string};
 }
 
 
@@ -34,6 +39,7 @@ const width = Dimensions.get("window").width;
 
 export default function Product(){
     const [product, setProduct] = useState<Product | null>(null);
+    const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
     const { handle } = useLocalSearchParams();
     const [index, setIndex] = useState(0);
 
@@ -41,7 +47,6 @@ export default function Product(){
         const getProduct = async () => {
             try{
                 const productVal = await fetchProduct(handle);
-                console.log(productVal);
                 setProduct(productVal);
             }catch(error){
                 console.error(error);
@@ -66,6 +71,61 @@ export default function Product(){
        )
     }
   }
+
+  const toggleAccordion = (section: string) => {
+    setActiveAccordion(activeAccordion === section ? null : section);
+  }
+
+  const parseWhatsIncluded = () => {
+    try{
+        return product?.whatsIncluded?.value ? JSON.parse(product.whatsIncluded.value) : [];
+    }catch{
+        console.error("Failed to parse the whats included field");
+        return [];
+    }
+  }
+
+  const parseFeatures = () => {
+    try {
+      if (!product?.features?.references?.nodes || !Array.isArray(product.features.references.nodes)) {
+        console.warn("Features data missing or invalid.");
+        return [];
+      }
+  
+      return product.features.references.nodes.map((node: any, index: number) => {
+        try {
+          // Extract and parse `field.value` if present
+          const fieldValue = node?.field?.value;
+  
+          if (!fieldValue || typeof fieldValue !== "string") {
+            console.warn(`Missing or invalid field.value at index ${index}`, node);
+            return `Feature ${index + 1} (Invalid Format)`;
+          }
+  
+          // Parse the JSON structure in `field.value`
+          const parsedNode = JSON.parse(fieldValue);
+  
+          // Extract the text from the parsed JSON structure
+          const textValue = parsedNode?.children?.find(
+            (child: any) => child.type === "paragraph"
+          )?.children?.find((child: any) => child.type === "text")?.value;
+  
+          if (textValue) {
+            return textValue;
+          } else {
+            console.warn(`Missing feature text at index ${index}`, parsedNode);
+            return `Feature ${index + 1} (Missing Text)`;
+          }
+        } catch (error) {
+          console.error(`Error parsing feature at index ${index}:`, error);
+          return `Feature ${index + 1} (Parsing Error)`;
+        }
+      });
+    } catch (error) {
+      console.error("Failed to parse features:", error);
+      return [];
+    }
+  };
 
    return(
     <SafeAreaView className="bg-white flex-1">
@@ -98,8 +158,33 @@ export default function Product(){
               <GwtButton title="Add To Cart" handlePress={() => {console.log("Add To Cart Clicked")}} />    
             </View> 
             <View className="my-4">
-                <Text className="text-lg font-mSemiBold mt-2 text-left">Description</Text>
-                <Text className="text-base font-mLight mt-2 text-left">{product && product.description}</Text>
+               {[
+                 {title: "Product Description", content: product &&  product.description && <Text className="text-base font-mRegular mt-2">{product.description}</Text>},
+                 {title: "Product Features", content: product && product.features && ( <View className="flex flex-col">{parseFeatures().map((feature: string, index: number) => (
+                    <Text key={`feature-item-${index}`} className="text-base font-mRegular mt-2">
+                     <Text className="text-darkPrimary">✓</Text> {feature}
+                    </Text>
+                  ))}</View>)},
+                 {title: "Warranty Information", content: product?.warranty?.reference.field.reference.image.url && (
+                    <Image source={{ uri: product.warranty.reference.field.reference.image.url }} className="w-full h-40" />
+                  )},
+                  {title: "Product Specifications", content: product?.specifications?.value},
+                  {title: "Whats Included", content: parseWhatsIncluded().map((item: string, index: number) => (
+                    <View key={index} className="w-full text-darkPrimary">
+                      <Text key={index} className="text-base font-mRegular mt-2"><Text className="text-darkPrimary">✓</Text> {item}</Text>
+                    </View>
+                  ))},
+               ].map(section => section.content && (
+                 <TouchableOpacity key={section.title} onPress={() => toggleAccordion(section.title)} className="my-4 px-2">
+                    <View className="flex flex-row items-center justify-between py-2 border-b border-gray-200 w-full">
+                     <Text className="text-lg font-mSemiBold">{section.title}</Text>
+                     <Ionicons name={activeAccordion === section.title ? "remove-outline" : "add-outline"} size={24} color="black" className="flex" />
+                    </View>               
+                  {activeAccordion === section.title && (
+                    <Text className="text-base font-mLight mt-2 px-4">{section.content}</Text>
+                  )}
+                 </TouchableOpacity>
+               ))}
             </View>
          </View>
     </ScrollView>
