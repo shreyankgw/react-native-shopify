@@ -155,9 +155,6 @@ export default function Product(){
                {product && product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != 0.0 && <Text className="text-lg font-mSemiBold line-through mt-2 text-gray-400 text-left">{formatPrice(product.compareAtPriceRange.minVariantPrice.amount)}</Text>}
             </View>
             <View className="my-4">
-              <GwtButton title="Add To Cart" handlePress={() => {console.log("Add To Cart Clicked")}} />    
-            </View> 
-            <View className="my-4">
                {[
                  {title: "Product Description", content: product &&  product.description && <Text className="text-base font-mRegular mt-2">{product.description}</Text>},
                  {title: "Product Features", content: product && product.features && ( <View className="flex flex-col">{parseFeatures().map((feature: string, index: number) => (
@@ -188,6 +185,10 @@ export default function Product(){
             </View>
          </View>
     </ScrollView>
+            <View className="p-4 border-t border-gray-200 flex flex-row items-center justify-between">
+              <GwtButton title="Add To Cart" handlePress={() => {console.log("Add To Cart Clicked")}}  containerStyles="flex-1" />  
+             <TouchableOpacity onPress={() => {console.log("Buy Now Clicked")}} activeOpacity={0.7} className="bg-brandLight rounded-xl flex justify-center items-center min-h-[44px] flex-1 ml-4"><Text className="font-mBold text-lg">Buy Now</Text></TouchableOpacity>
+            </View> 
     </SafeAreaView>
    );
 }
