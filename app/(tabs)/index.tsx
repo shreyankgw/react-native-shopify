@@ -5,22 +5,19 @@ import { router } from "expo-router";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import MainMenu from '@/components/MainMenu';
 
-import { storefrontQuery } from "@/lib/shopifyQueries";
+import { homepageSections } from "@/lib/shopifyQueries";
 import FadeIn from "@/components/FadeInAnimation";
 import HeroSlider from "@/components/HeroSlider";
 import FeaturedTab from "@/components/FeaturedTab";
-
-interface Product{
-  id: string;
-  title: string;
-  images: {edges: {node: {url: string}}[]};
-}
+import ProductCard from "@/components/ProductCard";
 
 const { width } = Dimensions.get('window');
 
 export default function Index() {
-    const [products, setProducts] = useState<Product[]>([]);
-
+    const [sections, setSections] = useState([]);
+    const [announcement, setAnnounement] = useState("");
+    const [bestSellers, setBestSellers] = useState([]);
+    const [shopbyvoltage, setShopbyvoltage] = useState([]);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const translateX = useSharedValue(-width);
 
@@ -42,16 +39,20 @@ export default function Index() {
     });
 
     useEffect(() => {
-      const fetchProducts = async () => {
-          try{
-          const products = await storefrontQuery();
-          setProducts(products);
-          }catch(error){
-            console.error(error);
-          }
-      };
-      fetchProducts();
-  }, []);
+        const getHomepageSections = async () => {
+           try{
+            const homepageSectionsVal = await homepageSections();
+            console.log(homepageSectionsVal);
+            setSections(homepageSectionsVal);
+            setAnnounement(homepageSectionsVal.find((section: any) => section.key === "announcement_text")?.value);
+            setBestSellers(homepageSectionsVal.find((section: any) => section.key === "best_seller_collection")?.reference.products.edges.map((edge: any) => edge.node));
+            setShopbyvoltage(homepageSectionsVal.find((section: any) => section.key === "shop_by_voltage_collections")?.references.edges.map((edge: any) => edge.node));
+           }catch(error){
+             console.error(error);
+           }
+        }
+        getHomepageSections();
+    }, []);
 
   return (
     <View className="bg-white h-full">
@@ -84,6 +85,18 @@ export default function Index() {
            <MainMenu />
         </ScrollView>
        </Animated.ScrollView>
+
+       {sections.map((section: any) => {
+             if (section.key === "show_announcement" && section.value === "true") {
+                return(
+                  <FadeIn duration={300} delay={100} key={section.key}>
+                    <View className="p-4 bg-brandText">
+                      <Text className="text-sm font-mBold text-white">{announcement}</Text>
+                    </View>            
+                  </FadeIn>
+                )
+             }
+           })}
            
            <View className="flex flex-row items-center justify-center p-4 gap-2 my-2">
              <FeaturedTab title="Shop Deals" handlePress={() => router.push("/collections/deals")} iconName="pricetags" size={14} />
@@ -91,14 +104,58 @@ export default function Index() {
            </View>
          
           <HeroSlider />
-          <FadeIn duration={500} delay={500}>
-          {products && products.map((product) => (
-          <View key={product.id}>
-            <Text>{product.title}</Text>
-            <Image source={{ uri: product.images.edges[0].node.url }} className="w-full h-[200px]" resizeMode="contain" />
-          </View>          
-          ))}
-          </FadeIn>
+
+          {
+            sections.map((section: any, index: number) => {
+              if(section.key === "best_sellers_product_carousel" && section.value === "true"){
+                return(
+                  <FadeIn duration={600} delay={400} key={`section-${index}`}>
+                    <View className="px-4">
+                        <View className="flex flex-row items-center justify-between flex-1">
+                          <Text className="text-lg font-mBold text-left">Best Sellers</Text>
+                          <TouchableOpacity onPress={() => router.push("/collections/featured-products")}><Text className="text-sm font-mBold underline text-gray-500">View All</Text></TouchableOpacity>
+                        </View>
+                      
+                      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                       <View className="flex-row items-stretch">
+                       {bestSellers.map((product: any, index: number) => (
+                        <View key={`product-${index}`} className="flex-shrink-0" style={{ width: width / 2 }}>
+                          <View className="flex-1 h-full items-stretch">
+                           {product && <ProductCard product={product} />}
+                          </View>
+                        </View>
+                      ))}
+                       </View>  
+                      </ScrollView>
+                    </View>
+                  </FadeIn>
+              )
+              }else if(section.key === "shop_by_voltage_tiles" && section.value === "true"){
+                 return(
+                   <FadeIn duration={600} delay={400} key={`section-${index}`}>
+                     <View className="p-4">
+                       <View className="flex flex-row items-center justify-between flex-1 mb-4">
+                         <Text className="text-xl font-mBold text-left">Shop by Voltage</Text>
+                       </View>
+                       
+                       <View className="flex-row flex-wrap">
+                       {shopbyvoltage.map((tile: any, index: number) => (
+                        <View key={`tile-${index}`} className="flex flex-row items-center justify-center" style={{ width: width / 2 - 20 }}>
+                          <View className="flex-1 h-full items-stretch">
+                           {tile && <TouchableOpacity onPress={() => router.push(`/collections/${tile.handle}`)}><Image source={{ uri: tile.categoryImage.reference.image.url }} className="w-full aspect-square" resizeMode="contain" /></TouchableOpacity>}
+                          </View>
+                        </View>
+                      ))}
+                       </View>
+                       
+                     </View>
+                   </FadeIn>
+                 )
+              }
+
+            })
+          }
+  
       </ScrollView>
     </View>
   );

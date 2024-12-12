@@ -16,7 +16,7 @@ export default function ProductCard({product}: {product: any}) {
             <Text className="text-base font-mSemiBold text-left">{product.title}</Text>
             <View className="flex flex-row items-baseline gap-2 mt-2">
               <Text className="text-sm font-mBold text-left">{formatPrice(product.priceRange.minVariantPrice.amount)}</Text>
-              {product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != '0.0'  && <Text className="text-sm font-mBold line-through text-gray-400 text-left">{formatPrice(product.compareAtPriceRange.minVariantPrice.amount)}</Text>}
+              {product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != '0.0'  && <Text className="text-sm font-mBold line-through text-gray-400 text-left">{formatPrice(product.compareAtPriceRange.minVariantPrice.amount)}</Text>}   
             </View>        
         </TouchableOpacity>
     );
