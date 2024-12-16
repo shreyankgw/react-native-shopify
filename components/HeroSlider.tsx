@@ -54,7 +54,7 @@ export default function HeroSlider(){
 
     return (
         <FadeIn duration={500} delay={100}>
-            <View className="bg-white mb-4">
+            <View className="bg-white mb-4 px-4">
               {banners.map((banner: Banner) => (
                  <TouchableOpacity key={banner.id} onPress={() => router.push(`/collections/${banner.handle}`)} className='w-full' activeOpacity={0.8}>
                     <Image source={{ uri: banner.image }} className="w-full aspect-square" accessibilityLabel={banner.title} accessibilityRole='image'  />

@@ -19,6 +19,7 @@ export default function Index() {
     const [bestSellers, setBestSellers] = useState([]);
     const [shopbyvoltage, setShopbyvoltage] = useState([]);
     const [shopbyCategory, setShopbyCategory] = useState([]);
+    const [bottomBanners, setBottomBanners] = useState([]);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const translateX = useSharedValue(-width);
 
@@ -43,12 +44,12 @@ export default function Index() {
         const getHomepageSections = async () => {
            try{
             const homepageSectionsVal = await homepageSections();
-            console.log(homepageSectionsVal);
             setSections(homepageSectionsVal);
             setAnnounement(homepageSectionsVal.find((section: any) => section.key === "announcement_text")?.value);
             setBestSellers(homepageSectionsVal.find((section: any) => section.key === "best_seller_collection")?.reference.products.edges.map((edge: any) => edge.node));
             setShopbyvoltage(homepageSectionsVal.find((section: any) => section.key === "shop_by_voltage_collections")?.references.edges.map((edge: any) => edge.node));
             setShopbyCategory(homepageSectionsVal.find((section: any) => section.key === "shop_by_category_collections")?.references.edges.map((edge: any) => edge.node));
+            setBottomBanners(homepageSectionsVal.find((section: any) => section.key === "banner_collections")?.references.edges.map((edge: any) => edge.node));
            }catch(error){
              console.error(error);
            }
@@ -160,13 +161,32 @@ export default function Index() {
                       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ justifyContent: "space-between" , gap: 8 }}>     
                        {shopbyCategory.map((collection: any, index: number) => (
                         <View key={`collection-${index}`} className="flex-shrink-0" style={{ width: width / 3 - 20 }}>       
-                           {collection && <TouchableOpacity className="flex flex-col items-center justify-center gap-3">
-                               {collection.categoryImage && <Image source={{ uri: collection.categoryImage.reference.image.url }} className="w-full aspect-square" resizeMode="contain" />}
+                           {collection && <TouchableOpacity className="flex flex-col items-center justify-center gap-3" onPress={() => router.push(`/collections/${collection.handle}`)} accessible={true} accessibilityLabel={collection.title}>
+                              <View className="relative items-center justify-center">
+                              {collection.categoryImage && <View className="bg-gray-100 rounded-full absolute" style={{ zIndex: -1, width: "90%", aspectRatio: 1 }}></View>}
+                              {collection.categoryImage && <Image source={{ uri: collection.categoryImage.reference.image.url }} className="w-full aspect-square" resizeMode="contain" />}
+                              </View>                     
                                <Text className="text-sm font-mBold text-center">{collection.title}</Text>
                             </TouchableOpacity>}
                         </View>
                       ))}
                       </ScrollView>
+                      </View>
+                    </FadeIn>
+                  )
+              }else if(section.key === "banners_at_bottom" && section.value === "true"){
+                  return(
+                    <FadeIn duration={1200} delay={1000} key={`section-${index}`}>
+                      <View className="p-4">
+                        <View className="flex flex-row items-center justify-between flex-1 mb-4">
+                          <Text className="text-xl font-mBold text-left">Explore More</Text>
+                        </View>
+                        {bottomBanners && bottomBanners.map((banner: any, index: number) => (
+
+                          <TouchableOpacity onPress={() => router.push(`/collections/${banner.handle}`)} key={`banner-${index}`} className="mb-4" accessible={true} accessibilityLabel={banner.title} accessibilityRole="image">
+                            {banner && <Image source={{ uri: banner.banner.reference.image.url }} className="w-full aspect-square" resizeMode="contain" />}
+                          </TouchableOpacity>
+                        ))}
                       </View>
                     </FadeIn>
                   )
