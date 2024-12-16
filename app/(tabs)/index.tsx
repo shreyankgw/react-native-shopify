@@ -18,6 +18,7 @@ export default function Index() {
     const [announcement, setAnnounement] = useState("");
     const [bestSellers, setBestSellers] = useState([]);
     const [shopbyvoltage, setShopbyvoltage] = useState([]);
+    const [shopbyCategory, setShopbyCategory] = useState([]);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const translateX = useSharedValue(-width);
 
@@ -47,6 +48,7 @@ export default function Index() {
             setAnnounement(homepageSectionsVal.find((section: any) => section.key === "announcement_text")?.value);
             setBestSellers(homepageSectionsVal.find((section: any) => section.key === "best_seller_collection")?.reference.products.edges.map((edge: any) => edge.node));
             setShopbyvoltage(homepageSectionsVal.find((section: any) => section.key === "shop_by_voltage_collections")?.references.edges.map((edge: any) => edge.node));
+            setShopbyCategory(homepageSectionsVal.find((section: any) => section.key === "shop_by_category_collections")?.references.edges.map((edge: any) => edge.node));
            }catch(error){
              console.error(error);
            }
@@ -111,28 +113,24 @@ export default function Index() {
                 return(
                   <FadeIn duration={600} delay={400} key={`section-${index}`}>
                     <View className="px-4">
-                        <View className="flex flex-row items-center justify-between flex-1">
+                        <View className="flex flex-row items-center justify-between flex-1 mb-4">
                           <Text className="text-lg font-mBold text-left">Best Sellers</Text>
                           <TouchableOpacity onPress={() => router.push("/collections/featured-products")}><Text className="text-sm font-mBold underline text-gray-500">View All</Text></TouchableOpacity>
                         </View>
                       
-                      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                       <View className="flex-row items-stretch">
+                      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ justifyContent: "space-between" , gap: 8 }}>     
                        {bestSellers.map((product: any, index: number) => (
-                        <View key={`product-${index}`} className="flex-shrink-0" style={{ width: width / 2 }}>
-                          <View className="flex-1 h-full items-stretch">
+                        <View key={`product-${index}`} className="flex-shrink-0" style={{ width: width / 2 - 40 }}>       
                            {product && <ProductCard product={product} />}
-                          </View>
                         </View>
                       ))}
-                       </View>  
                       </ScrollView>
                     </View>
                   </FadeIn>
               )
               }else if(section.key === "shop_by_voltage_tiles" && section.value === "true"){
                  return(
-                   <FadeIn duration={600} delay={400} key={`section-${index}`}>
+                   <FadeIn duration={800} delay={500} key={`section-${index}`}>
                      <View className="p-4">
                        <View className="flex flex-row items-center justify-between flex-1 mb-4">
                          <Text className="text-xl font-mBold text-left">Shop by Voltage</Text>
@@ -151,8 +149,28 @@ export default function Index() {
                      </View>
                    </FadeIn>
                  )
-              }
+              }else if(section.key === "shop_by_category_tiles" && section.value === "true"){
+                  return(
+                    <FadeIn duration={1000} delay={800} key={`section-${index}`}>
+                      <View className="px-4">
+                        <View className="flex flex-row items-center justify-between flex-1 mb-4">
+                          <Text className="text-xl font-mBold text-left">Shop by Category</Text>
+                        </View>
 
+                      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ justifyContent: "space-between" , gap: 8 }}>     
+                       {shopbyCategory.map((collection: any, index: number) => (
+                        <View key={`collection-${index}`} className="flex-shrink-0" style={{ width: width / 3 - 20 }}>       
+                           {collection && <TouchableOpacity className="flex flex-col items-center justify-center gap-3">
+                               {collection.categoryImage && <Image source={{ uri: collection.categoryImage.reference.image.url }} className="w-full aspect-square bg-gray-50 rounded-full" resizeMode="cover" />}
+                               <Text className="text-sm font-mBold text-center">{collection.title}</Text>
+                            </TouchableOpacity>}
+                        </View>
+                      ))}
+                      </ScrollView>
+                      </View>
+                    </FadeIn>
+                  )
+              }
             })
           }
   

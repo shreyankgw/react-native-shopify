@@ -6,13 +6,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 const { width } = Dimensions.get('window');
 export default function ProductGrid({products}: {products: any}) {
-    const ProductData = ({item}: any) => <ProductCard product={item} />
+    const ProductData = ({item}: any) => <View className="flex-1"><ProductCard product={item} /></View>
     return (
         <FlatList data={products} 
                   renderItem={ProductData} 
                   numColumns={2} 
                   keyExtractor={(product: any) => product.id} 
-                  columnWrapperStyle={{justifyContent: "space-between"}} 
+                  columnWrapperStyle={{ justifyContent: "space-between", gap: 8 }} 
                   contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8, paddingBottom: 100 }}
                   showsVerticalScrollIndicator={false} 
                   ListHeaderComponent={
