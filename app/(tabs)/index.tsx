@@ -161,7 +161,7 @@ export default function Index() {
                        {shopbyCategory.map((collection: any, index: number) => (
                         <View key={`collection-${index}`} className="flex-shrink-0" style={{ width: width / 3 - 20 }}>       
                            {collection && <TouchableOpacity className="flex flex-col items-center justify-center gap-3">
-                               {collection.categoryImage && <Image source={{ uri: collection.categoryImage.reference.image.url }} className="w-full aspect-square bg-gray-50 rounded-full" resizeMode="cover" />}
+                               {collection.categoryImage && <Image source={{ uri: collection.categoryImage.reference.image.url }} className="w-full aspect-square" resizeMode="contain" />}
                                <Text className="text-sm font-mBold text-center">{collection.title}</Text>
                             </TouchableOpacity>}
                         </View>
