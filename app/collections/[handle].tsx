@@ -19,7 +19,7 @@ export default function Collection(){
           try{
            const collectionVal = await fetchCollection(handle);
            const products = collectionVal.products.edges.map((edge: any) => edge.node);
-           console.log(products);
+           console.log('collection page loaded');
            setLoading(false); 
            setProducts(products);
            setCollection(collectionVal);
