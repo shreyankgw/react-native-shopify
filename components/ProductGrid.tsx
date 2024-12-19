@@ -19,10 +19,8 @@ interface FilterOption{
 
 
 const { width } = Dimensions.get('window');
-export default function ProductGrid({products, filters}: {products: any, filters: any}) {
+export default function ProductGrid({products, filters, sortBy, setSortBy, selectedFilters, setSelectedFilters}: any) {
    const [bottomsheetContent, setBottomSheetContent] = useState<string | null>(null);
-   const [sortbyOption, setSortbyOption] = useState<string>("BEST_SELLING");
-   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
    const bottomSheetRef = useRef<BottomSheet>(null);
 
     const sortOptions: SortOption[] = [
@@ -37,13 +35,13 @@ export default function ProductGrid({products, filters}: {products: any, filters
     ];
 
     const toggleFilter = (filterId: string, valueId: string) => {
-      setSelectedFilters((prev) => {
+      setSelectedFilters((prev: any) => {
         const updatedFilters = { ...prev };
         if (!updatedFilters[filterId]) {
           updatedFilters[filterId] = [];
         }
         if (updatedFilters[filterId].includes(valueId)) {
-          updatedFilters[filterId] = updatedFilters[filterId].filter((id) => id !== valueId);
+          updatedFilters[filterId] = updatedFilters[filterId].filter((id: string) => id !== valueId);
         } else {
           updatedFilters[filterId].push(valueId);
         }
@@ -107,9 +105,9 @@ export default function ProductGrid({products, filters}: {products: any, filters
                    <View className="h-[1px] bg-gray-200 w-full mb-4"></View>
                    {sortOptions.map(({title, value}) => (
                      <View key={title} className="flex flex-row items-start mb-3">
-                         <Checkbox value={sortbyOption === value} 
-                                   onValueChange={() => setSortbyOption(value)}
-                                   color={sortbyOption === value ? "#046a38" : undefined}
+                         <Checkbox value={sortBy === value} 
+                                   onValueChange={() => setSortBy(value)}
+                                   color={sortBy === value ? "#046a38" : undefined}
                                    accessibilityLabel={title} 
                            />
                          <Text className="ml-3 text-base font-mSemiBold">{title}</Text>
@@ -129,7 +127,7 @@ export default function ProductGrid({products, filters}: {products: any, filters
                       <Checkbox
                         value={selectedFilters[id]?.includes(valueId) || false}
                         onValueChange={() => toggleFilter(id, valueId)}
-                        color={selectedFilters[id]?.includes(valueId) ? "#000" : undefined}
+                        color={selectedFilters[id]?.includes(valueId) ? "#046a38" : undefined}
                         accessibilityLabel={valueLabel}
                       />
                       <Text className="ml-3 text-base font-mSemiBold">{valueLabel}</Text>
