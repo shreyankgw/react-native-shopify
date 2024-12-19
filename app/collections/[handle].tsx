@@ -7,22 +7,33 @@ import { router } from "expo-router";
 import { fetchCollection } from "@/lib/shopifyQueries";
 import ProductGrid from "@/components/ProductGrid";
 
+interface CollectionResponse {
+    products?: {
+        filters?: any[];
+        edges: {
+            node: any;
+        }[];
+    };
+}
+
 
 export default function Collection(){
     const {handle} = useLocalSearchParams();
     const [collection, setCollection] = useState<any>();
     const [products, setProducts] = useState<any>();
+    const [filters, setFilters] = useState<any>();
     const [loading, setLoading] = useState<Boolean>(true);
 
     useEffect(()=> {
        const getCollection = async (handle: any) => {
           try{
-           const collectionVal = await fetchCollection(handle);
-           const products = collectionVal.products.edges.map((edge: any) => edge.node);
-           console.log('collection page loaded');
+           const collectionVal: CollectionResponse = await fetchCollection(handle);
+           const products = collectionVal.products?.edges.map((edge: any) => edge.node);
+           const filters = collectionVal.products?.filters?.map((filter: any) => ({id: filter.id, label: filter.label, type: filter.type, values: filter.values.map((value: any) => ({id: value.id, label: value.label, count: value.count}))}));
            setLoading(false); 
            setProducts(products);
            setCollection(collectionVal);
+           setFilters(filters);
           }catch(error){
             console.error(error);
           }
@@ -55,7 +66,7 @@ export default function Collection(){
     </View>
     <View>
         <View className="w-full mb-4">
-           {products && products.length > 0 && <ProductGrid products={products} />}
+           {products && products.length > 0 && <ProductGrid products={products} filters={filters} />}
         </View>
     </View>
     </View>
