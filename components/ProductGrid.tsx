@@ -30,8 +30,7 @@ export default function ProductGrid({products, filters, sortBy, setSortBy, selec
       { title: "Highest Price", value: "PRICE_DESC" },
       { title: "Lowest Price", value: "PRICE_ASC" },
       { title: "Newest", value: "CREATED_DESC" },
-      { title: "Oldest", value: "CREATED_ASC" },
-      { title: "Manual", value: "MANUAL" },
+      { title: "Oldest", value: "CREATED_ASC" }
     ];
 
     const toggleFilter = (filterId: string, valueId: string) => {
@@ -139,7 +138,6 @@ export default function ProductGrid({products, filters, sortBy, setSortBy, selec
               )}
            </BottomSheetScrollView>
          </BottomSheet>
-      </>
-        
+      </> 
     );
 }

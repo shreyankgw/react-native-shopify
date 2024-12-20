@@ -33,6 +33,7 @@ export default function Collection(){
             const collectionData: CollectionResponse = await fetchCollection(handle, 24, null, sortBy, selectedFilters);
             const products = collectionData.products?.edges.map((edge: any) => edge.node);
             const filters = collectionData.products?.filters?.map((filter: any) => ({id: filter.id, label: filter.label, type: filter.type, values: filter.values.map((value: any) => ({id: value.id, label: value.label, count: value.count}))}));
+            console.log(filters);
             setProducts(products);
             setFilters(filters);
             setCollection(collectionData);
@@ -71,7 +72,7 @@ export default function Collection(){
     </View>
     <View>
         <View className="w-full mb-4">
-           {products && products.length > 0 && <ProductGrid products={products} filters={filters} sortBy={sortBy} selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />}
+           {products && products.length > 0 && <ProductGrid products={products} filters={filters} sortBy={sortBy} setSortBy={setSortBy} selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />}
         </View>
     </View>
     </View>
