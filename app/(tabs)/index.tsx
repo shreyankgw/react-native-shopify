@@ -1,4 +1,4 @@
-import { Text, View, ScrollView, Image, TouchableOpacity, Dimensions } from "react-native";
+import { Text, View, ScrollView, Image, TouchableOpacity, Dimensions, TextInput, Keyboard } from "react-native";
 import { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
@@ -40,6 +40,11 @@ export default function Index() {
       }
     });
 
+    const handleSearch =() => {
+      Keyboard.dismiss();
+      router.push('/search')
+    }
+
     useEffect(() => {
         const getHomepageSections = async () => {
            try{
@@ -60,6 +65,8 @@ export default function Index() {
   return (
     <View className="bg-white h-full">
       <ScrollView>
+
+      {/* commented out as we do not want the layout to be similar to the website, instead we will implement the full scale searchbar
       <View
           className="flex items-center justify-between flex-row flex-wrap w-full px-4 border-b-2 border-gray-200 bg-darkPrimary"
         >
@@ -88,6 +95,25 @@ export default function Index() {
            <MainMenu />
         </ScrollView>
        </Animated.ScrollView>
+
+       */}
+
+       {/* Implement the search input bar that will go to the search page on click */}
+       <View className="bg-brandText">
+       <View className="flex-row items-center bg-gray-50 rounded-lg border border-gray-300 px-4 m-4">
+       <Ionicons name="search-outline" size={20} color="#6b7280" className="mr-2" />
+      <TextInput
+        className="flex-1 text-base text-gray-700"
+        placeholder="Search products..."
+        placeholderTextColor="#9ca3af"
+        accessibilityLabel="Search"
+        onFocus={() => router.push('/search')}
+      />
+      <TouchableOpacity onPress={handleSearch} className="pl-2">
+        <Ionicons name="arrow-forward-outline" size={20} color="#6b7280" />
+      </TouchableOpacity>
+    </View>
+    </View>
 
        {sections.map((section: any) => {
              if (section.key === "show_announcement" && section.value === "true") {
