@@ -1,10 +1,8 @@
-import { Text, View, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Image, TouchableOpacity } from 'react-native';
 import FadeIn from './FadeInAnimation';
 import { heroBanners } from '@/lib/shopifyQueries';
-import {useState, useEffect, useRef } from 'react';
+import {useState, useEffect } from 'react';
 import { router } from 'expo-router';
-
-const { width } = Dimensions.get('window');
 
 interface Banner{
   id: string;
@@ -45,7 +43,7 @@ export default function HeroSlider(){
         <FadeIn duration={500} delay={300}>
             <View className="bg-white mb-4">
               {Array.from({ length: 2 }).map((_, index) => (
-                <View key={index} className="w-full aspect-square bg-gray-400 animate-pulse"></View>
+                <View key={index} className="w-full aspect-[140/53] bg-gray-400 animate-pulse"></View>
               ))}
             </View>
         </FadeIn>
@@ -54,10 +52,10 @@ export default function HeroSlider(){
 
     return (
         <FadeIn duration={500} delay={100}>
-            <View className="bg-white mb-4 px-4">
+            <View className="bg-white px-4 my-4 flex flex-col gap-1">
               {banners.map((banner: Banner) => (
                  <TouchableOpacity key={banner.id} onPress={() => router.push(`/collections/${banner.handle}`)} className='w-full' activeOpacity={0.8}>
-                    <Image source={{ uri: banner.image }} className="w-full aspect-square" accessibilityLabel={banner.title} accessibilityRole='image'  />
+                    <Image source={{ uri: banner.image }} className="w-full aspect-[140/53]" accessibilityLabel={banner.title} accessibilityRole='image'  />
                  </TouchableOpacity>
               ))}
             </View>
