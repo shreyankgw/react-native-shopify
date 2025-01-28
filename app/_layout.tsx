@@ -1,12 +1,14 @@
 import { Stack, SplashScreen } from "expo-router";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "@/global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [intitalRoute, setInitialRoute] = useState<string>("index");
+
   const [fontsLoaded, error] = useFonts({
     "Montserrat-Bold": require("../assets/fonts/Montserrat-Bold.ttf"),
     "Montserrat-Regular": require("../assets/fonts/Montserrat-Regular.ttf"),
@@ -25,7 +27,8 @@ export default function RootLayout() {
    
   return (
     <GestureHandlerRootView>
-    <Stack>
+    <Stack initialRouteName={intitalRoute}>
+       <Stack.Screen name="index" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="(tabs)" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="products/[handle]" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="collections/[handle]" options={{ headerShown: false }}></Stack.Screen>
