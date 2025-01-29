@@ -53,7 +53,7 @@ export default function ProductGrid({products, filters, sortBy, setSortBy, selec
       bottomSheetRef.current?.expand();
     }, []);
 
-    const ProductData = ({item}: any) => <View className="flex-1"><ProductCard product={item} /></View>;
+    const ProductData = ({item}: any) => <View style={{ width: width / 2 - 20 }}><ProductCard product={item} /></View>;
 
     const backDrop = useCallback((props: any) => {
       return(

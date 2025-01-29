@@ -7,14 +7,14 @@ export default function WelcomeScreen() {
   const router = useRouter();
 
   return (   
-    <View className="flex-1 bg-white px-4">
+    <View className="flex-1 bg-white px-4 justify-between">
       {/* Header Section */}
-      <View className="flex-1 items-center pt-8">
-        <Image source={require("@/assets/images/gw_green.png")} resizeMode="contain" className="w-[300px] h-[120px]" />
+      <View className="flex items-center pt-8">
+        <Image source={require("@/assets/images/gw_green.png")} resizeMode="contain" className="w-[300px] h-[80px]" />
       </View>
 
       {/* Features Section */}
-      <View className="flex-1 gap-8">
+      <View className="flex flex-col gap-8">
         {/* Shop Feature */}
         <View className="flex-row items-center">
           <View className="w-12 h-12 bg-green-50 rounded-full items-center justify-center">
@@ -62,7 +62,7 @@ export default function WelcomeScreen() {
       </View>
 
       {/* Footer Section */}
-      <View className="pb-12 flex flex-col gap-2">
+      <View className="pb-8 flex flex-col gap-2">
         <Ionicons name="people-sharp" size={24} color="#046a38" className='mx-auto'/>
         <Text className="text-center text-gray-500 font-mLight text-sm">
           By continuing, you agree to our <Link href="/terms" className='text-darkPrimary'>Terms of Service</Link> and <Link href="/policy" className='text-darkPrimary'>Privacy Policy</Link>.
