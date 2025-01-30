@@ -3,11 +3,13 @@ import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import "@/global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {storage} from "@/lib/storage";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [intitalRoute, setInitialRoute] = useState<string>("index");
+  const [onboarding, setOnboarding] = useState(false);
+  const intitalRoute = onboarding ? "(tabs)/index" : "index";
 
   const [fontsLoaded, error] = useFonts({
     "Montserrat-Bold": require("../assets/fonts/Montserrat-Bold.ttf"),
@@ -20,7 +22,19 @@ export default function RootLayout() {
 
    useEffect(() => {
        if(error) throw error;
-       if(fontsLoaded) SplashScreen.hideAsync()
+       if(fontsLoaded){
+        const checkOnboarding = async () => {
+          try{
+            const storageValue = storage.getString("onboarding");
+            console.log(storageValue);
+          }catch(e){
+            console.error(e)
+          }finally{
+            SplashScreen.hideAsync();
+          }
+        }
+        checkOnboarding();
+       }
    }, [fontsLoaded, error]);
 
    if(!fontsLoaded && !error) return null;

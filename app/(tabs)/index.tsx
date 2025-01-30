@@ -112,7 +112,7 @@ export default function Index() {
 
         {/* Implement the search input bar that will go to the search page on click */}
         <View className="bg-brandText">
-          <View className="flex-row items-center bg-gray-50 rounded-lg border border-gray-300 px-4 m-4">
+          <View className="flex-row items-center bg-gray-50 rounded-lg border border-gray-300 px-4 m-4 py-2">
             <Ionicons name="search-outline" size={20} color="#6b7280" className="mr-2" />
             <TextInput
               className="flex-1 text-base text-gray-700"

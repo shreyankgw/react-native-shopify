@@ -12,7 +12,7 @@ export default function Search() {
                     <View className="flex flex-row items-center justify-between p-4 border-b-2 border-gray-200 w-full gap-4">
                         <TouchableOpacity className="text-3xl font-mBold" onPress={() => router.back()}><Ionicons name="arrow-back-outline" size={24} color="black" /></TouchableOpacity>
                         <View className="flex-1">
-                            <View className="flex-row items-center justify-between bg-gray-50 rounded-lg border border-brandText px-4">
+                            <View className="flex-row items-center justify-between bg-gray-50 rounded-lg border border-brandText px-4 py-2">
                                 <TextInput
                                     className="text-base text-brandText"
                                     placeholder="Search products..."
