@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { predictiveSearch } from "@/lib/shopifyQueries";
 import debounce from "lodash.debounce";
 import SearchResultSection from "@/components/SearchResultSection";
+import * as Haptics from 'expo-haptics';
 
 interface SearchResult{
     products?: any[];
@@ -52,6 +53,21 @@ export default function Search() {
         debouncedSearch(query);
     }
 
+    const handleSearchSubmit = useCallback(() => {
+       const trimmedQuery = searchQuery.trim();
+       if(trimmedQuery){
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        debouncedSearch.cancel();
+        setSearchQuery(''); // Clear the search query after submit
+        setResults(null);
+        router.push(`/search/${encodeURIComponent(trimmedQuery)}`);
+       }
+    }, [searchQuery]);
+
+    const handleSearchIconPress = () => {
+        handleSearchSubmit();
+    }
+
 
     return (
         <SafeAreaView className="bg-white h-full">
@@ -68,8 +84,10 @@ export default function Search() {
                                     value={searchQuery}
                                     onChangeText={handleSearch}
                                     autoFocus
+                                    onSubmitEditing={handleSearchSubmit}
+                                    returnKeyType="search"
                                 />
-                                {loading ? ( <ActivityIndicator size="small" color="#24272a" /> ) : ( <Ionicons name="search-outline" size={20} color="#24272a" className="mr-2" /> ) }
+                                {loading ? ( <ActivityIndicator size="small" color="#24272a" /> ) : ( <TouchableOpacity onPress={handleSearchIconPress} disabled={!searchQuery.trim()} accessibilityLabel="Search" accessibilityRole="button"><Ionicons name="search-outline" size={20} color={searchQuery.trim() ? "#24272a" : "#ccc"}  className="mr-2" accessible accessibilityHint="Press to search" /></TouchableOpacity> ) }
                             </View>
                         </View>
                         <TouchableOpacity className="text-3xl font-mBold" onPress={() => router.push("/(tabs)/cart")}>
