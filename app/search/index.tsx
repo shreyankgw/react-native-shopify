@@ -148,6 +148,8 @@ export default function Search() {
                               <SearchResultSection title="Products" items={results.products} type="product" />
                               <SearchResultSection title="Collections" items={results.collections} type="collection" />
                               <SearchResultSection title="Pages" items={results.pages} type="page" />
+
+                              { searchQuery !== "" && results.products?.length === 0 && results.collections?.length === 0 && results.pages?.length === 0 &&  <Text className="text-lg font-mBold px-4 mb-2">No results found for "{searchQuery}"</Text>}
                             </>
                         ) : (
                             <View className="px-4">
@@ -173,10 +175,6 @@ export default function Search() {
                                     </>
                                 )}
                             </View>
-                        )}
-
-                        {searchQuery && !results && (
-                            <Text className="px-4 py-2 text-gray-500">No results for "{searchQuery}"</Text>
                         )}
                     </Animated.ScrollView>
                 
