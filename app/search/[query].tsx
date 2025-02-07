@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, TouchableOpacity, Image } from "react-native";
+import { View, Text, ActivityIndicator, TouchableOpacity, Image, SafeAreaView } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { searchPageResults } from "@/lib/shopifyQueries";
 import { FlashList } from "@shopify/flash-list";
@@ -95,6 +95,7 @@ export default function Product() {
 
 
   return (
+    <SafeAreaView className="bg-white h-full">
     <FlashList
       data={items}
       renderItem={renderItem}
@@ -127,5 +128,6 @@ export default function Product() {
       contentContainerStyle={{ paddingBottom: 16 }}
       className="bg-gray-50 flex-1"
     />
+    </SafeAreaView>
   );
 }
