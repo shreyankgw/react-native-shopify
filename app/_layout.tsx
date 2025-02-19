@@ -1,6 +1,6 @@
 import { Stack, SplashScreen } from "expo-router";
 import { useFonts } from "expo-font";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "@/global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {storage} from "@/lib/storage";
@@ -8,8 +8,11 @@ import {storage} from "@/lib/storage";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [onboarding, setOnboarding] = useState(false);
-  const intitalRoute = onboarding ? "(tabs)/index" : "index";
+  const storageValue = storage.getBoolean("onboarding");
+   console.log(storageValue);
+  const intitalRoute = storageValue ? "(tabs)" : "welcome";
+    console.log(intitalRoute);
+  
 
   const [fontsLoaded, error] = useFonts({
     "Montserrat-Bold": require("../assets/fonts/Montserrat-Bold.ttf"),
@@ -22,27 +25,15 @@ export default function RootLayout() {
 
    useEffect(() => {
        if(error) throw error;
-       if(fontsLoaded){
-        const checkOnboarding = async () => {
-          try{
-            const storageValue = storage.getString("onboarding");
-            console.log(storageValue);
-          }catch(e){
-            console.error(e)
-          }finally{
-            SplashScreen.hideAsync();
-          }
-        }
-        checkOnboarding();
-       }
+       if(fontsLoaded) SplashScreen.hideAsync();
    }, [fontsLoaded, error]);
 
-   if(!fontsLoaded && !error) return null;
+   if(!fontsLoaded) return null;
    
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <Stack initialRouteName={intitalRoute}>
-       <Stack.Screen name="index" options={{ headerShown: false }}></Stack.Screen>
+       <Stack.Screen name="welcome" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="(tabs)" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="products/[handle]" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="collections/[handle]" options={{ headerShown: false }}></Stack.Screen>

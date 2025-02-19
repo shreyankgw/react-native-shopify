@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { storage } from '@/lib/storage';
 
 export default function WelcomeScreen() {
   const router = useRouter();
-
+  
   return (   
     <View className="flex-1 bg-white px-4 justify-between">
       {/* Header Section */}
@@ -69,7 +70,10 @@ export default function WelcomeScreen() {
         </Text>
         <TouchableOpacity
           className="bg-darkPrimary py-4 rounded-xl"
-          onPress={() => router.replace('/(tabs)')}
+          onPress={() => {
+            storage.set("onboarding", true);
+            router.replace("/(tabs)");
+          }}
         >
           <Text className="text-center text-white font-mSemiBold text-lg">
             Continue

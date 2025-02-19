@@ -67,6 +67,7 @@ export default function Product() {
         <Text className="text-sm font-semibold mb-1 dark:text-white">
           {item.title}
         </Text>
+       
         <Text className="text-xs text-gray-500 dark:text-gray-300 capitalize">
           {item.__typename.toLowerCase()}
         </Text>
