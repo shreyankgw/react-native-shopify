@@ -1,53 +1,56 @@
-> Edited for use in IDX on 07/09/12
 
-# Welcome to your Expo app 👋
+# Shopify + React Native + Expo Shopping Mobile App (TS)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This app uses shopify's storefront API as graphql client, uses expo as a development build, nativewind as a style guide, MMKV as storage option. Most code of the app is written in typescript while some clients and modules are setup using javascript. Feel free to change/customize the files as needed with both JS/TS. TS is recommended considering the safety of the code.
 
-## Get started
+This app is COPYRIGHT BY GREENWORKS TOOLS. permission is required to copy and use any code from this project.
 
-#### Android
 
-Android previews are defined as a `workspace.onStart` hook and started as a vscode task when the workspace is opened/started.
+## Installation
 
-Note, if you can't find the task, either:
-- Rebuild the environment (using command palette: `IDX: Rebuild Environment`), or
-- Run `npm run android -- --tunnel` command manually run android and see the output in your terminal. The device should pick up this new command and switch to start displaying the output from it.
-
-In the output of this command/task, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You'll also find options to open the app's developer menu, reload the app, and more.
-
-#### Web
-
-Web previews will be started and managred automatically. Use the toolbar to manually refresh.
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Get started by cloning this repo or downloading it your local environment.
 
 ```bash
-npm run reset-project
+  npm install
+  cd my-project
+  npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Please make sure you have expo go installed in your local device or have android studio/xcode configured on your local PC.
+    
+## Shopify Client Variables
 
-## Learn more
+To run this project, you will need to add the following variables changed to the shopifyClient.js file
 
-To learn more about developing your project with Expo, look at the following resources:
+`storeDomain`
+`apiVersion`
+`publicAccessToken`
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## Join the community
+## Features
 
-Join our community of developers creating universal apps.
+- Dynamic homepage sections controlled with metaobject entries
+- Predictive search
+- Category page
+- PDP sections
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Roadmap
+
+- OTP Login customer creation flow
+- Dynamic checkout buttons
+- Shopify Checkout in a webview
+
+Please keep checking for the released updates.
+
+
+## Authors
+
+- [@EssDeeJay](https://github.com/EssDeeJay) - Shreyank Jadiya
+
+
+## Contributing
+
+Contributions are always welcome!
+
+Please adhere to this project's `code of conduct`.
