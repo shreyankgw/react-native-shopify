@@ -118,7 +118,7 @@ export default function Search() {
 
 
     return (
-        <SafeAreaView className="bg-white h-full">
+        <SafeAreaView className="bg-white h-full flex-1">
             <View className="flex-1">
                     <View className="flex flex-row items-center justify-between px-4 py-6 border-b-2 border-gray-200 w-full gap-4 bg-brandText">
                         <TouchableOpacity className="text-3xl font-mBold" onPress={() => router.back()}><Ionicons name="arrow-back-outline" size={24} color="#fff" /></TouchableOpacity>

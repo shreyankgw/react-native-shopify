@@ -1,6 +1,7 @@
 import React, {useRef, useCallback, useState} from "react";
 import { FlatList, View, Text, Dimensions, TouchableOpacity } from "react-native";
 import ProductCard from "./ProductCard";
+import { FlashList } from "@shopify/flash-list";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Checkbox from "expo-checkbox";
