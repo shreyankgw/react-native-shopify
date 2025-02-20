@@ -2,8 +2,7 @@ import { Text, View, ScrollView, Image, TouchableOpacity, Dimensions, TextInput,
 import { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import MainMenu from '@/components/MainMenu';
+import { storage } from "@/lib/storage";
 
 import { homepageSections } from "@/lib/shopifyQueries";
 import FadeIn from "@/components/FadeInAnimation";
@@ -20,25 +19,9 @@ export default function Index() {
   const [shopbyvoltage, setShopbyvoltage] = useState([]);
   const [shopbyCategory, setShopbyCategory] = useState([]);
   const [bottomBanners, setBottomBanners] = useState([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const translateX = useSharedValue(-width);
 
-  const openDrawer = () => {
-    translateX.value = withTiming(0, { duration: 500 });
-    setDrawerOpen(true);
-  }
+  const onboarding = storage.getBoolean("onboarding");
 
-  const closeDrawer = () => {
-    translateX.value = withTiming(-width, { duration: 500 });
-    setDrawerOpen(false);
-  }
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: translateX.value }],
-      zIndex: 10
-    }
-  });
 
   const handleSearch = () => {
     Keyboard.dismiss();

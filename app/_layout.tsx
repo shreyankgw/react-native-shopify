@@ -1,6 +1,6 @@
-import { Stack, SplashScreen } from "expo-router";
+import { Stack, SplashScreen, useRootNavigationState, useRouter } from "expo-router";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+import { useEffect} from "react";
 import "@/global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {storage} from "@/lib/storage";
@@ -8,10 +8,8 @@ import {storage} from "@/lib/storage";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const storageValue = storage.getBoolean("onboarding");
-   console.log(storageValue);
-  const intitalRoute = storageValue ? "(tabs)" : "welcome";
-    console.log(intitalRoute);
+  const router = useRouter()
+  const navigationState = useRootNavigationState();
   
 
   const [fontsLoaded, error] = useFonts({
@@ -23,16 +21,29 @@ export default function RootLayout() {
     "Montserrat-Medium": require("../assets/fonts/Montserrat-Medium.ttf")
   });
 
-   useEffect(() => {
-       if(error) throw error;
-       if(fontsLoaded) SplashScreen.hideAsync();
-   }, [fontsLoaded, error]);
+  // Get initial route from storage
+  const storageValue = storage.getBoolean("onboarding");
+  const initialRoute = storageValue ? "/(tabs)" : "/welcome";
 
-   if(!fontsLoaded) return null;
+  console.log(storageValue, initialRoute);
+
+  useEffect(() => {
+    if (error) throw error;
+    if (fontsLoaded) SplashScreen.hideAsync();
+  }, [fontsLoaded, error]);
+
+  // Handle redirection after fonts load and navigation is ready
+  useEffect(() => {
+    if (fontsLoaded && navigationState?.key) {
+      router.replace(initialRoute);
+    }
+  }, [fontsLoaded, navigationState?.key]);
+
+  if (!fontsLoaded && !error) return null;
    
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-    <Stack initialRouteName={intitalRoute}>
+    <Stack>
        <Stack.Screen name="welcome" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="(tabs)" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="products/[handle]" options={{ headerShown: false }}></Stack.Screen>
