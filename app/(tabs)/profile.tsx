@@ -1,12 +1,13 @@
-import { Text, View, ScrollView, TouchableOpacity } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
-import { buildAuthorizationUrl, requestAccessToken, generateCodeVerifier } from "@/lib/shopifyClient";
+import { Text, View, ScrollView, TouchableOpacity, Modal, ActivityIndicator, SafeAreaView, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
 import { WebView }  from 'react-native-webview';
+import { useAuth } from "@/context/authContext";
+import * as Linking from "expo-linking";
 import { fetchCustomerProfile } from "@/lib/shopifyQueries";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+
+const SHOPIFY_REDIRECT_URL = Linking.createURL("callback");
 
 interface Customer{
   firstName: string;
@@ -29,182 +30,163 @@ interface Customer{
 }
 
 export default function Profile() {
-  const [accessToken, setAccessToken] = useState(null);
-  const [idToken, setIdToken] = useState(null);
-  const [refreshToken, setRefreshToken] = useState(null);
+  const { login, logout, isLoading, authUrl, clearAuthAttempt, getValidAccessToken, isLoggedIn } = useAuth();
+  const [showWebView, setShowWebView] = useState(false);
   const [customer, setCustomer] = useState<Customer | null>(null);
-  const [authUrl, setAuthUrl] = useState<string | null>(null);
-  const [codeVerifier, setCodeVerifier] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const webViewRef = useRef<WebView>(null);
+  const [loadingCustomer, setLoadingCustomer] = useState(false);
 
   useEffect(() => {
+    if (authUrl) {
+      console.log("Auth URL ready, showing WebView.");
+      setShowWebView(true);
+    } else if (showWebView) {
+      console.log("Auth complete or cancelled, hiding WebView.");
+      setShowWebView(false);
+    }
+  }, [authUrl, showWebView]);
 
-    if(!accessToken){
-      async function initiateAuth() {
+  // Load token and log it if available
+  useEffect(() => {
+    if (isLoggedIn && !customer) {
+      const fetchCustomer = async () => {
         try {
-          const verifier = await generateCodeVerifier();
-          const { url, codeverifier: generatedCodeVerifier } = await buildAuthorizationUrl(verifier);
-          console.log('initial access token', accessToken);
-          setAuthUrl(url);
-          setCodeVerifier(generatedCodeVerifier);
-        } catch (error) {
-          console.error('Error during authorization initiation:', error);
+          setLoadingCustomer(true);
+          const token = await getValidAccessToken();
+          console.log("Access token:", token);
+          if (token) {
+            const profile = await fetchCustomerProfile(token);
+            console.log("Customer profile fetched:", profile);
+            setCustomer(profile);
+          }
+        } catch (err) {
+          console.error("Failed to fetch customer profile:", err);
+        } finally {
+          setLoadingCustomer(false);
         }
-      }
-  
-      initiateAuth();
-    }else{
-      
-      async function fetchCustomer() {
-        console.log('fetch customer profile');
-        try{
-          const customerData = await fetchCustomerProfile(accessToken);
-          setCustomer(customerData);
-        }catch(error){
-          console.error('Error fetching customer profile:', error);
-        }
-      }
-
+      };
       fetchCustomer();
     }
-    
-  }, [accessToken]);
+  }, [isLoggedIn]);
 
-
-  const handleLoadEnd = (syntheticEvent: any) => {
-    const { nativeEvent } = syntheticEvent;
-    const { url } = nativeEvent;
-    const configuredRedirectUri = 'shop.63263310018.app://callback';
-
-    console.log('WebView Load Ended:', nativeEvent);
-
-    // Check if the load ended with the callback URL
-    if (url && url.startsWith(configuredRedirectUri)) {
-      console.log('Callback URL Detected in LoadEnd:', url);
-      const code = new URL(url).searchParams.get('code');
-      console.log('Extracted Code from LoadEnd:', code);
-
-      if (code && codeVerifier) {
-        // Stop WebView navigation to prevent further errors
-        if (webViewRef.current) {
-          webViewRef.current.stopLoading();
-          console.log('Stopped WebView Loading from LoadEnd');
-        }
-
-        // Request access token using the code from LoadEnd
-        requestAccessToken(code, codeVerifier)
-          .then((tokenResponse) => {
-            console.log('Token Response from LoadEnd:', tokenResponse);
-            setAccessToken(tokenResponse?.access_token);
-            setIdToken(tokenResponse?.id_token);
-            setRefreshToken(tokenResponse?.refresh_token);
-            // Further processing: store token, navigate, etc.
-            console.log('Further Processing: Access Token Set -', tokenResponse?.access_token);
-            setIsLoading(false);
-            // Example: If using React Navigation, navigate to profile screen
-            // navigation.navigate('ProfileScreen', { token: accessToken });
-          })
-          .catch((error) => {
-            console.error('Token Request Error from LoadEnd:', error)
-            setIsLoading(false);
-          });
-      }
-    }
-  };
-
-  if(!accessToken && authUrl && !isLoading){
-    return (
-      <SafeAreaView className="flex-1 bg-white px-4">
-      <WebView 
-        ref={webViewRef}
-        source={{ uri: authUrl }}
-        className="flex-1 bg-white px-4"
-        onError={(syntheticEvent) => {
-          const { nativeEvent } = syntheticEvent;
-          console.log('WebView Error:', nativeEvent);
-        }}
-        onLoadEnd={handleLoadEnd}
-        onLoad={(syntheticEvent) => {
-          console.log('WebView Load:', syntheticEvent.nativeEvent);
-        }}
-        onHttpError={(syntheticEvent) => {
-          console.log('WebView HTTP Error:', syntheticEvent.nativeEvent);
-        }}
-      />
-      </SafeAreaView>
-    )
-  } else if(accessToken){
-    // display customer details and allow them to edit their details and view their order history
-
-    return(
-      <SafeAreaView className="bg-white h-full">
-      <ScrollView
-       className="h-full bg-white"
-      >
-      <View className="flex flex-row items-center justify-between p-4 border-b-2 border-gray-200 w-full">
-               <TouchableOpacity className="text-3xl font-mBold" onPress={() => router.back()}><Ionicons name="arrow-back-outline" size={24} color="black" /></TouchableOpacity>
-               <Text className="text-xl font-mBold uppercase">{customer ? "Account" : "Login/Signup" }</Text>
-               <TouchableOpacity className="text-3xl font-mBold" onPress={() => console.log("help faq route for general enquiries")}><Ionicons name="information-circle-outline" size={24} color="black" /></TouchableOpacity>
-      </View>
-      <View className="flex flex-row items-center justify-between p-4">
-       <Text className="text-2xl font-mBold">Hi, {customer && customer.firstName ? customer.firstName : customer?.emailAddress?.emailAddress} !</Text>
-      </View>
-
-      <View className="px-4">
-         <TouchableOpacity className="flex flex-row items-center justify-between p-4 border-b-2 border-gray-200 w-full" onPress={() => router.push("/account/edit")}>
-          <Text className="text-lg font-mSemiBold">Edit Profile</Text>
-          <Ionicons name="chevron-forward-outline" size={24} color="black" />
-         </TouchableOpacity>
-         <TouchableOpacity className="flex flex-row items-center justify-between p-4 border-b-2 border-gray-200 w-full" onPress={() => router.push("/account/orders")}>
-          <Text className="text-lg font-mSemiBold">Order History</Text>
-          <Ionicons name="chevron-forward-outline" size={24} color="black" />
-         </TouchableOpacity>
-      </View>
-
-      <View className="px-4 mt-12">
-         {/* recently viewed products */}
-         <Text className="text-xl font-mBold mt-4">Recently Viewed</Text>
-         {/* render product grid of recently viewed products that are stored in mmkv local storage */ }
-      </View>
-
-      <View className="px-4 mt-12 flex flex-row items-center justify-between">
-         <TouchableOpacity className="flex flex-row items-center justify-center gap-1 bg-darkPrimary px-4 py-2 rounded-lg" onPress={() => console.log("logout customer mutation")}>
-          <Ionicons name="log-out-outline" size={24} color="white" />
-          <Text className="text-lg font-mSemiBold text-white">Logout</Text>
-         </TouchableOpacity>
-
-         <TouchableOpacity className="flex flex-row items-center justify-center gap-1 bg-red-500 px-4 py-2 rounded-lg" onPress={() => router.push("/support")}>
-         <MaterialIcons name="delete" size={24} color="white" />
-          <Text className="text-lg font-mSemiBold text-white">Delete Account</Text>
-         </TouchableOpacity>
-      </View>
-      {/* Add more profile details here */}
-      </ScrollView>
-      </SafeAreaView>  
-    )
-  }else if (isLoading) {
-    return (
-      <SafeAreaView>
-       <View className="flex-1 bg-white px-4 justify-center items-center">
-        <Text>Processing authentication...</Text>
-      </View>
-      </SafeAreaView>
-    
-    );
-  }
-  else{
-    return (
-      <SafeAreaView>
-      <View
-        className="flex-1 bg-white px-4"
-      >
-           <Text>No profile found. Redirecting to login ....</Text> 
-      </View>
-      </SafeAreaView>
-    );
+  const handleNavigationChange = async (navState: any) => {
+    const { url } = navState;
+    console.log('WebView Nav State Change:', url);
   }
 
- 
+  const handleCloseWebView = () => {
+    console.log("WebView Modal closed manually.");
+    setShowWebView(false);
+    clearAuthAttempt(); // Clear auth state if user closes manually
+}
+
+  return (
+   <SafeAreaView className="flex-1 items-center justify-center p-5 bg-white">
+     {isLoggedIn ? (
+        loadingCustomer ? (
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" />
+            <Text className="mt-4 text-gray-600">Loading your profile...</Text>
+          </View>
+        ) : (
+          <SafeAreaView className="bg-white h-full">
+          <ScrollView
+           className="h-full bg-white"
+          >
+          <View className="flex flex-row items-center justify-between p-4 border-b-2 border-gray-200 w-full">
+                   <TouchableOpacity className="text-3xl font-mBold" onPress={() => router.back()}><Ionicons name="arrow-back-outline" size={24} color="black" /></TouchableOpacity>
+                   <Text className="text-xl font-mBold uppercase">{customer ? "Account" : "Login/Signup" }</Text>
+                   <TouchableOpacity className="text-3xl font-mBold" onPress={() => console.log("help faq route for general enquiries")}><Ionicons name="information-circle-outline" size={24} color="black" /></TouchableOpacity>
+          </View>
+          <View className="flex flex-row items-center justify-between p-4">
+           <Text className="text-2xl font-mBold">Hi, {customer && customer.firstName ? customer.firstName : customer?.emailAddress?.emailAddress} !</Text>
+          </View>
+    
+          <View className="px-4">
+             <TouchableOpacity className="flex flex-row items-center justify-between p-4 border-b-2 border-gray-200 w-full" onPress={() => router.push("/account/edit")}>
+              <Text className="text-lg font-mSemiBold">Edit Profile</Text>
+              <Ionicons name="chevron-forward-outline" size={24} color="black" />
+             </TouchableOpacity>
+             <TouchableOpacity className="flex flex-row items-center justify-between p-4 border-b-2 border-gray-200 w-full" onPress={() => router.push("/account/orders")}>
+              <Text className="text-lg font-mSemiBold">Order History</Text>
+              <Ionicons name="chevron-forward-outline" size={24} color="black" />
+             </TouchableOpacity>
+          </View>
+    
+          <View className="px-4 mt-12">
+             {/* recently viewed products */}
+             <Text className="text-xl font-mBold mt-4">Recently Viewed</Text>
+             {/* render product grid of recently viewed products that are stored in mmkv local storage */ }
+          </View>
+    
+          <View className="px-4 mt-12 flex flex-row items-center justify-between">
+             <TouchableOpacity className="flex flex-row items-center justify-center gap-1 bg-darkPrimary px-4 py-2 rounded-lg" onPress={logout}>
+              <Ionicons name="log-out-outline" size={24} color="white" />
+              <Text className="text-lg font-mSemiBold text-white">Logout</Text>
+             </TouchableOpacity>
+          </View>
+          {/* Add more profile details here */}
+          </ScrollView>
+          </SafeAreaView>  
+        )
+      ) : (
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-2xl font-bold text-gray-800 mb-8">Welcome, Guest!</Text>
+          <TouchableOpacity
+            onPress={login}
+            disabled={isLoading || showWebView}
+            className={`py-3 px-8 rounded-lg bg-darkPrimary ${isLoading || showWebView ? 'opacity-50' : ''}`}
+          >
+            {isLoading && !showWebView ? (
+              <ActivityIndicator size="small" color="#ffffff" />
+            ) : (
+              <Text className="text-white font-semibold text-lg">Login / Signup</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+
+
+      <Modal
+        visible={showWebView}
+        onRequestClose={handleCloseWebView} // For Android back button
+        animationType="slide"
+      >
+        <SafeAreaView className="flex-1 bg-white">
+          {/* Optional Header for WebView Modal */}
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+             <Text className="text-lg font-semibold">Login/Signup</Text>
+             <TouchableOpacity onPress={handleCloseWebView} className="p-2">
+                 <Text className="text-blue-600 text-lg">Cancel</Text>
+             </TouchableOpacity>
+          </View>
+
+          {authUrl ? (
+             <WebView
+                source={{ uri: authUrl }}
+                onNavigationStateChange={handleNavigationChange}
+                incognito // Clears cache/cookies for fresh login
+                className="flex-1"
+                startInLoadingState={true}
+                renderLoading={() => (
+                    <ActivityIndicator size="large" className="absolute inset-0" />
+                )}
+                onError={(syntheticEvent) => {
+                    const { nativeEvent } = syntheticEvent;
+                    console.warn('WebView error: ', nativeEvent);
+                    Alert.alert("Error", "Could not load Shopify login page. Please check your connection.");
+                    handleCloseWebView(); // Close on error
+                  }}
+             />
+          ) : (
+            // Should ideally not be shown if logic is correct, but as fallback
+            <View className="flex-1 justify-center items-center">
+               <ActivityIndicator size="large" />
+               <Text className="mt-4 text-gray-600">Preparing Login...</Text>
+            </View>
+          )}
+
+        </SafeAreaView>
+      </Modal>
+   </SafeAreaView>
+  )
 }

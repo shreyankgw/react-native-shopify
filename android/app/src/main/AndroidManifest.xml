@@ -24,9 +24,8 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="myapp"/>
-        <data android:scheme="com.anonymous.greenworks"/>
         <data android:scheme="shop.63263310018.app"/>
+        <data android:scheme="com.anonymous.greenworks"/>
       </intent-filter>
     </activity>
   </application>

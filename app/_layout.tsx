@@ -4,7 +4,8 @@ import { useEffect} from "react";
 import "@/global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {storage} from "@/lib/storage";
-
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthProvider } from "@/context/authContext";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -25,8 +26,6 @@ export default function RootLayout() {
   const storageValue = storage.getBoolean("onboarding");
   const initialRoute = storageValue ? "/(tabs)" : "/welcome";
 
-  console.log(storageValue, initialRoute);
-
   useEffect(() => {
     if (error) throw error;
     if (fontsLoaded) SplashScreen.hideAsync();
@@ -34,14 +33,16 @@ export default function RootLayout() {
 
   // Handle redirection after fonts load and navigation is ready
   useEffect(() => {
-    if (fontsLoaded && navigationState?.key) {
+    if (fontsLoaded && navigationState?.stale) {
       router.replace(initialRoute);
     }
-  }, [fontsLoaded, navigationState?.key]);
+  }, [fontsLoaded, navigationState?.stale]);
 
   if (!fontsLoaded && !error) return null;
    
   return (
+    <SafeAreaProvider>
+    <AuthProvider>
     <GestureHandlerRootView style={{ flex: 1 }}>
     <Stack>
        <Stack.Screen name="welcome" options={{ headerShown: false }}></Stack.Screen>
@@ -50,7 +51,10 @@ export default function RootLayout() {
        <Stack.Screen name="collections/[handle]" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="search/index" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="search/[query]" options={{ headerShown: false }}></Stack.Screen>
+       <Stack.Screen name="account/edit" options={{ headerShown: false }}></Stack.Screen>
     </Stack>
     </GestureHandlerRootView>
+    </AuthProvider>
+    </SafeAreaProvider>
   );
 }

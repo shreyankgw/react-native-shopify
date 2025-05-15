@@ -47,39 +47,7 @@ export default function Index() {
 
   return (
     <View className="bg-white h-full">
-      <ScrollView>
-
-        {/* commented out as we do not want the layout to be similar to the website, instead we will implement the full scale searchbar
-      <View
-          className="flex items-center justify-between flex-row flex-wrap w-full px-4 border-b-2 border-gray-200 bg-darkPrimary"
-        >
-          <TouchableOpacity onPress={openDrawer}>
-          <Ionicons name="menu-sharp" size={28} color="#ffffff" />
-          </TouchableOpacity>         
-          <Image source={require("@/assets/images/gw_logo.png")} resizeMode="contain" className="w-[180px] h-[70px]" />
-          <TouchableOpacity onPress={() => router.push("/search")}>
-          <Ionicons name="search-outline" size={28} color="#ffffff" />
-          </TouchableOpacity> 
-        </View>
-       <Animated.ScrollView
-           className="absolute top-0 right-0 bottom-0 bg-darkPrimary shadow-lg" style={[animatedStyle, {width}]}
-       >
-        <View className="flex flex-row items-center justify-between m-3 p-3">
-        <Image source={require("@/assets/images/gw_logo.png")} resizeMode="contain" className="w-[180px] h-[40px]" />
-        <TouchableOpacity
-          className=""
-          onPress={closeDrawer}
-        >
-          <Ionicons name="close-circle-sharp" size={32} color="#ffffff" />
-        </TouchableOpacity>
-        </View>
-        
-        <ScrollView className="flex-1 p-4">
-           <MainMenu />
-        </ScrollView>
-       </Animated.ScrollView>
-
-       */}
+      <ScrollView>     
 
         {sections.map((section: any) => {
           if (section.key === "show_announcement" && section.value === "true") {

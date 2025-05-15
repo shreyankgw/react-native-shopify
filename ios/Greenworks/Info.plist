@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>myapp</string>
+          <string>shop.63263310018.app</string>
           <string>com.anonymous.greenworks</string>
         </array>
       </dict>

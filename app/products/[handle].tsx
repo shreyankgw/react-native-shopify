@@ -163,7 +163,7 @@ export default function Product(){
                     </Text>
                   ))}</View>)},
                  {title: "Warranty Information", content: product?.warranty?.reference.field.reference.image.url && (
-                    <Image source={{ uri: product.warranty.reference.field.reference.image.url }} className="w-full h-40" />
+                    <Image source={{ uri: product.warranty.reference.field.reference.image.url }} className="w-40 h-40" resizeMode="contain" />
                   )},
                   {title: "Product Specifications", content: product?.specifications?.value},
                   {title: "Whats Included", content: parseWhatsIncluded().map((item: string, index: number) => (

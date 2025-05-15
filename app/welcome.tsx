@@ -10,7 +10,7 @@ export default function WelcomeScreen() {
   return (   
     <View className="flex-1 bg-white px-4 justify-between">
       {/* Header Section */}
-      <View className="flex items-center pt-8">
+      <View className="flex items-center pt-16">
         <Image source={require("@/assets/images/gw_green.png")} resizeMode="contain" className="w-[300px] h-[80px]" />
       </View>
 
