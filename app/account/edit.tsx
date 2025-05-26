@@ -93,6 +93,13 @@ export default function AccountEdit(){
              <Text className="text-xl font-mBold mt-4">Recently Viewed</Text>
              {/* render product grid of recently viewed products that are stored in mmkv local storage */ }
           </View>
+
+          <View className="px-4 mt-12">
+             {/* recently viewed products */}
+             <Text className="text-xl font-mBold mt-4">Notification Preferences</Text>
+             {/* Necessary notification preferences to allow the push notifications to the device */ }
+            
+          </View>
     
           <View className="px-4 mt-12 flex flex-row items-center justify-between">
              <TouchableOpacity className="flex flex-row items-center justify-center gap-1 bg-darkPrimary px-4 py-2 rounded-lg" onPress={logout}>

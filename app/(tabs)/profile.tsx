@@ -1,4 +1,4 @@
-import { Text, View, ScrollView, TouchableOpacity, Modal, ActivityIndicator, SafeAreaView, Alert } from "react-native";
+import { Text, View, ScrollView, TouchableOpacity, Modal, ActivityIndicator, SafeAreaView, Alert, Switch } from "react-native";
 import React, { useState, useEffect } from "react";
 import { WebView }  from 'react-native-webview';
 import { useAuth } from "@/context/authContext";
@@ -34,6 +34,18 @@ export default function Profile() {
   const [showWebView, setShowWebView] = useState(false);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loadingCustomer, setLoadingCustomer] = useState(false);
+  const [notificationPrefs, setNotificationPrefs] = useState({
+        orderUpdates: true,
+        promotions: false,
+        restockAlerts: false,
+  });
+
+  const toggleNotificationPref = (key: keyof typeof notificationPrefs) => {
+      setNotificationPrefs(prev => ({
+        ...prev,
+        [key]: !prev[key],
+      }));
+  };
 
   useEffect(() => {
     if (authUrl) {
@@ -116,6 +128,43 @@ export default function Profile() {
              {/* recently viewed products */}
              <Text className="text-xl font-mBold mt-4">Recently Viewed</Text>
              {/* render product grid of recently viewed products that are stored in mmkv local storage */ }
+          </View>
+
+          <View className="px-4 mt-12">
+             {/* recently viewed products */}
+             <Text className="text-xl font-mBold mt-4">Notification Preferences</Text>
+             <Text className="text-base font-mRegular my-2">Please update your notification prefrences as per your preference.</Text>
+             {/* Necessary notification preferences to allow the push notifications to the device */ }
+             <View className="flex flex-col gap-4">
+              <View className="flex flex-row items-center justify-between py-3">
+                  <Text className="text-base font-mSemiBold">Order Updates</Text>
+                    <Switch
+                      value={notificationPrefs.orderUpdates}
+                      onValueChange={() => toggleNotificationPref('orderUpdates')}
+                      trackColor={{ false: "rgba(36, 39, 42, 0.6)", true: "rgb(36, 39, 42)" }}
+                      thumbColor={notificationPrefs.orderUpdates ? "#f4f4f4" : "#f4f4f4"}
+                    />
+              </View>
+
+              <View className="flex flex-row items-center justify-between py-3">
+                <Text className="text-base font-mSemiBold">Deal / Promotions Alerts</Text>
+                <Switch
+                    value={notificationPrefs.promotions}
+                    onValueChange={() => toggleNotificationPref('promotions')}
+                    trackColor={{ false: "rgba(36, 39, 42, 0.6)", true: "rgb(36, 39, 42)" }}
+                    thumbColor={notificationPrefs.promotions ? "#f4f4f4" : "#f4f4f4"}
+                />
+              </View>
+              <View className="flex flex-row items-center justify-between py-3">
+                <Text className="text-base font-mSemiBold">Shipping / Tracking Alerts</Text>
+                <Switch
+                  value={notificationPrefs.restockAlerts}
+                  onValueChange={() => toggleNotificationPref('restockAlerts')}
+                  trackColor={{ false: "rgba(36, 39, 42, 0.6)", true: "rgb(36, 39, 42)" }}
+                  thumbColor={notificationPrefs.restockAlerts ? "#f4f4f4" : "#f4f4f4"}
+                />
+              </View>
+             </View>
           </View>
     
           <View className="px-4 mt-12 flex flex-row items-center justify-between">
