@@ -4,11 +4,12 @@ import { useLocalSearchParams, router } from "expo-router";
 import Carousel from "react-native-reanimated-carousel";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { configureReanimatedLogger } from "react-native-reanimated";
-
 import { fetchProduct } from "@/lib/shopifyQueries";
 import formatPrice from "@/utilities/formatPrice";
 import { calculatePercentageOff } from "@/utilities/percentOff";
 import GwtButton from "@/components/GwtButton";
+import FractionalStarRating from "@/components/FractionalStarRating";
+import JudgeMeReviewWidget from "@/components/JudgemeReviewComponent";
 
 configureReanimatedLogger({
     strict: false
@@ -31,6 +32,12 @@ interface Product {
     warranty?: { reference: { field: { reference: { image: { url: string } } } } };
     faq?: { references: { nodes: { fields: { key: string; value: string }[] }[] } };
     whatsIncluded?: {value: string};
+    rating?: {
+      value: string; // JSON string with the rating value
+    };
+    rating_count?: {
+      value: string; // e.g. "13"
+    };
 }
 
 
@@ -127,6 +134,27 @@ export default function Product(){
     }
   };
 
+  // rating stars logic
+
+  // --- Parse rating values ---
+  let ratingValue = 0;
+  let ratingCount = 0;
+  try {
+    if (product?.rating?.value) {
+      const parsed = JSON.parse(product.rating.value);
+      ratingValue = parseFloat(parsed.value) || 0;
+    }
+    if (product?.rating_count?.value) {
+      ratingCount = parseInt(product.rating_count.value) || 0;
+    }
+  } catch (e) {
+    ratingValue = 0;
+    ratingCount = 0;
+  }
+
+  const gid = product && product.id;
+  const rawProductId = gid && gid.split('/').pop(); 
+
    return(
     <SafeAreaView className="bg-white flex-1">
     <ScrollView className="bg-white flex-1">
@@ -148,10 +176,18 @@ export default function Product(){
             {product && product.images.edges.length > 1 && renderDots()}
          </View>
          <View className="p-4">
-            {product && product.variants && <Text className="text-xs font-mLight text-left">SKU:{" "}{product.variants.edges.map((edge: any) => edge.node.sku)}</Text>}
+            {product && product.variants && <Text className="text-sm font-mLight text-left">SKU:{" "}{product.variants.edges.map((edge: any) => edge.node.sku)}</Text>}
             <Text className="text-2xl font-mBold mt-2">{product && product.title}</Text>
+            <View className="flex flex-row items-center mb-2 mt-2">
+                <FractionalStarRating
+                    rating={ratingValue}
+                    ratingCount={ratingCount}
+                    size={20}
+                />
+                <TouchableOpacity onPress={() => console.log('Open write a review modal')}><Text className="font-mRegular text-sm underline inline-flex">{" "}Write a review</Text></TouchableOpacity>
+            </View>
             <View className="flex flex-row items-baseline gap-2 mt-2">
-              <Text className={`text-lg font-mSemiBold mt-2 text-left ${product && product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != 0.0 ? "text-red-600" : ""}`}>{product && formatPrice(product.priceRange.minVariantPrice.amount)}</Text>
+              <Text className={`text-2xl font-mSemiBold mt-2 text-left ${product && product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != 0.0 ? "text-red-600" : ""}`}>{product && formatPrice(product.priceRange.minVariantPrice.amount)}</Text>
                {product && product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != 0.0 && <Text className="text-lg font-mSemiBold line-through mt-2 text-gray-400 text-left">{formatPrice(product.compareAtPriceRange.minVariantPrice.amount)}</Text>}
             </View>
             <View className="my-4">
@@ -184,6 +220,17 @@ export default function Product(){
                ))}
             </View>
          </View>
+
+        
+          {product && (
+            <JudgeMeReviewWidget
+                productHandle={handle}
+                publicToken="1ZUNI9zdWisvMlQ-FTzTUZ6qEGQ"
+                shopDomain="greenworks-tools-dev.myshopify.com"
+            />
+          )}      
+         
+
     </ScrollView>
             <View className="p-4 border-t border-gray-200 flex flex-row items-center justify-between">
               <GwtButton title="Add To Cart" handlePress={() => {console.log("Add To Cart Clicked")}}  containerStyles="flex-1" />  

@@ -1,11 +1,29 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { router } from "expo-router";
-
+import renderStars from "@/utilities/renderStars";
 import formatPrice from "@/utilities/formatPrice";
 import { calculatePercentageOff } from "@/utilities/percentOff";
+import FractionalStarRating from "./FractionalStarRating";
+
 
 export default function ProductCard({ product }: { product: any }) {
+   
+   // Always parse, default to 0 if missing
+  let ratingValue = 0;
+  let ratingCount = 0;
+  try {
+    if (product.rating?.value) {
+      const parsed = JSON.parse(product.rating.value);
+      ratingValue = parseFloat(parsed.value) || 0;
+    }
+    if (product.rating_count?.value) {
+      ratingCount = parseInt(product.rating_count.value) || 0;
+    }
+  } catch (e) {
+    // Already set to 0
+  }
+
   return (
     <TouchableOpacity
       className="bg-white border border-gray-200 rounded-lg p-4 items-start mb-4 gap-2 flex-1"
@@ -35,6 +53,16 @@ export default function ProductCard({ product }: { product: any }) {
         <Text className="text-base font-mSemiBold text-left">
           {product.title}
         </Text>
+
+         <View className="flex flex-row items-center mb-1 mt-1">
+           <FractionalStarRating
+               rating={ratingValue}
+               ratingCount={ratingCount}
+               size={16}
+            />
+        </View>
+
+
         <View className="flex flex-row items-baseline gap-2 mt-2">
           <Text className="text-sm font-mBold text-left">
             {formatPrice(product.priceRange.minVariantPrice.amount)}
