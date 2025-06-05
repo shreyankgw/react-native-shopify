@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Dimensions, Image, Button, ScrollView, TouchableOpacity, SafeAreaView } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import Carousel from "react-native-reanimated-carousel";
@@ -9,7 +9,8 @@ import formatPrice from "@/utilities/formatPrice";
 import { calculatePercentageOff } from "@/utilities/percentOff";
 import GwtButton from "@/components/GwtButton";
 import FractionalStarRating from "@/components/FractionalStarRating";
-import JudgeMeReviewWidget from "@/components/JudgemeReviewComponent";
+import JudgeMeReviewComponent from "@/components/JudgemeReviewComponent";
+import JudgeMeWriteReviewModal from "@/components/JudgemeReviewModal";
 
 configureReanimatedLogger({
     strict: false
@@ -49,6 +50,7 @@ export default function Product(){
     const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
     const { handle } = useLocalSearchParams();
     const [index, setIndex] = useState(0);
+    const [reviewmodalvisible, setReviewModalVisible] = useState(false);
 
     useEffect(() => {
         const getProduct = async () => {
@@ -152,8 +154,7 @@ export default function Product(){
     ratingCount = 0;
   }
 
-  const gid = product && product.id;
-  const rawProductId = gid && gid.split('/').pop(); 
+  const productId = product && product.id.split("/").pop();
 
    return(
     <SafeAreaView className="bg-white flex-1">
@@ -184,7 +185,12 @@ export default function Product(){
                     ratingCount={ratingCount}
                     size={20}
                 />
-                <TouchableOpacity onPress={() => console.log('Open write a review modal')}><Text className="font-mRegular text-sm underline inline-flex">{" "}Write a review</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => setReviewModalVisible(true)}><Text className="font-mRegular text-sm underline inline-flex">{" "}Write a review</Text></TouchableOpacity>
+                <JudgeMeWriteReviewModal
+                    productId={productId && parseInt(productId) || 999999}
+                    visible={reviewmodalvisible}
+                    onClose={() => setReviewModalVisible(false)}
+                />
             </View>
             <View className="flex flex-row items-baseline gap-2 mt-2">
               <Text className={`text-2xl font-mSemiBold mt-2 text-left ${product && product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != 0.0 ? "text-red-600" : ""}`}>{product && formatPrice(product.priceRange.minVariantPrice.amount)}</Text>
@@ -207,34 +213,37 @@ export default function Product(){
                       <Text key={index} className="text-base font-mRegular mt-2"><Text className="text-darkPrimary">✓</Text> {item}</Text>
                     </View>
                   ))},
+                  { title: "Product Reviews", content: product && (
+                                                    <JudgeMeReviewComponent
+                                                        shopifyProductId={product.id}
+                                                        apiToken="mShsGxoMYdSnQg4AyGZzGLq2dMw"
+                                                        shopDomain="greenworks-tools-dev.myshopify.com"
+                                                        perPage={ratingCount}
+                                                    />
+                      ),
+                  },
                ].map(section => section.content && (
-                 <TouchableOpacity key={section.title} onPress={() => toggleAccordion(section.title)} className="my-4 px-2">
+                <View key={section.title}>
+                 <TouchableOpacity  onPress={() => toggleAccordion(section.title)} className="my-4 px-2">
                     <View className="flex flex-row items-center justify-between py-2 border-b border-gray-200 w-full">
                      <Text className="text-lg font-mSemiBold">{section.title}</Text>
                      <Ionicons name={activeAccordion === section.title ? "remove-outline" : "add-outline"} size={24} color="black" className="flex" />
                     </View>               
-                  {activeAccordion === section.title && (
-                    <Text className="text-base font-mLight mt-2 px-4">{section.content}</Text>
-                  )}
                  </TouchableOpacity>
+
+                 {activeAccordion === section.title && (
+                    <View className="text-base font-mLight mt-2 px-4">{section.content}</View>
+                  )}
+                </View>
                ))}
             </View>
          </View>
-
-        
-          {product && (
-            <JudgeMeReviewWidget
-                productHandle={handle}
-                publicToken="1ZUNI9zdWisvMlQ-FTzTUZ6qEGQ"
-                shopDomain="greenworks-tools-dev.myshopify.com"
-            />
-          )}      
          
 
     </ScrollView>
             <View className="p-4 border-t border-gray-200 flex flex-row items-center justify-between">
-              <GwtButton title="Add To Cart" handlePress={() => {console.log("Add To Cart Clicked")}}  containerStyles="flex-1" />  
-             <TouchableOpacity onPress={() => {console.log("Buy Now Clicked")}} activeOpacity={0.7} className="bg-brandLight rounded-xl flex justify-center items-center min-h-[44px] flex-1 ml-4"><Text className="font-mBold text-lg">Buy Now</Text></TouchableOpacity>
+             <TouchableOpacity onPress={() => {console.log("Buy Now Clicked")}} activeOpacity={0.7} className="bg-brandLight rounded-xl flex justify-center items-center min-h-[44px] flex-1 mr-4"><Text className="font-mBold text-lg">Buy Now</Text></TouchableOpacity>
+             <GwtButton title="Add To Cart" handlePress={() => {console.log("Add To Cart Clicked")}}  containerStyles="flex-1" />  
             </View> 
     </SafeAreaView>
    );
