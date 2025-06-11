@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from "react";
 import { View, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
-import Svg, { Path, Defs, Rect, ClipPath, G } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
 
 // Star SVG path as a constant
 const STAR_PATH =
@@ -21,19 +21,27 @@ const FractionalStar = memo(
     emptyColor = "#E5E7EB",
   }: FractionalStarProps) => {
     return (
-      <Svg width={size} height={size} viewBox="0 0 24 24">
-        {/* Empty Star */}
-        <Path d={STAR_PATH} fill={emptyColor} />
-        {/* Filled Star, clipped */}
-        <Defs>
-          <ClipPath id="clip">
-            <Rect x="0" y="0" width={24 * fill} height="24" />
-          </ClipPath>
-        </Defs>
-        <G clipPath="url(#clip)">
-          <Path d={STAR_PATH} fill={filledColor} />
-        </G>
-      </Svg>
+      <View style={{ width: size, height: size }}>
+        {/* Empty star in the background */}
+        <Svg width={size} height={size} viewBox="0 0 24 24" style={StyleSheet.absoluteFill}>
+          <Path d={STAR_PATH} fill={emptyColor} />
+        </Svg>
+        {/* Filled star clipped with a View mask */}
+        <View
+          style={{
+            width: size * fill,
+            height: size,
+            overflow: "hidden",
+            position: "absolute",
+            left: 0,
+            top: 0,
+          }}
+        >
+          <Svg width={size} height={size} viewBox="0 0 24 24">
+            <Path d={STAR_PATH} fill={filledColor} />
+          </Svg>
+        </View>
+      </View>
     );
   }
 );
@@ -77,10 +85,7 @@ export const FractionalStarRating = memo(
     }, [rating, size]);
 
     // Format rating value
-    const displayRatingValue = useMemo(
-      () => rating.toFixed(2),
-      [rating]
-    );
+    const displayRatingValue = useMemo(() => rating.toFixed(2), [rating]);
 
     return (
       <View style={[styles.row, style]}>

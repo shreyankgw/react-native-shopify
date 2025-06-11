@@ -11,6 +11,7 @@ export interface AuthContextType{
     logout: () => void;
     getValidAccessToken: () => Promise<string | null>;
     isLoading: boolean;
+    isRefreshing: boolean;
     authUrl: string | null;
     pkceState: { codeVerifier: string; state: string; } | null;
     handleRedirect: (url: string) => Promise<void>;
@@ -60,6 +61,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const [idToken, setIdToken] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [pkceState, setPkceState] = useState<{ codeVerifier: string; state: string } | null>(null);
 
@@ -99,6 +101,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
 
           console.log('Attempting to refresh access token...');
           setIsLoading(true); // Indicate loading during refresh
+          setIsRefreshing(true);
 
           try {
             const response = await fetch(shopConfig.TOKEN_ENDPOINT, {
@@ -126,13 +129,14 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
             setRefreshToken(data.refresh_token);
             setIdToken(data.id_token);
             setExpiresAt(Date.now() + data.expires_in * 1000);
-            setIsLoading(false);
             return data.access_token;
           } catch(error){
             console.error('Error refreshing token:', error);
             logout(); // Ensure logout on error
-            setIsLoading(false);
             return null;
+          } finally{
+            setIsLoading(false);
+            setIsRefreshing(false);
           }
   }, []);
 
@@ -140,6 +144,9 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     // Use state values first, but double-check expiry
     const currentExpiresAt = expiresAt; // Read from state
     const currentAccessToken = accessToken; // Read from state
+
+    console.log('token expiry time', new Date(currentExpiresAt).toISOString());
+    console.log('current time', new Date(Date.now()).toISOString());
 
     if (currentAccessToken && currentExpiresAt && Date.now() < currentExpiresAt - 60000) { // 60 seconds buffer
       console.log("Using existing valid access token.");
@@ -290,7 +297,10 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
       }
   }
 
-  const isLoggedIn = !!accessToken && !!expiresAt && Date.now() < expiresAt;
+  const isLoggedIn =
+                        (!!accessToken && !!expiresAt && Date.now() < expiresAt)
+                    ||   (isRefreshing)
+                    ||  (!!refreshToken && !!expiresAt && Date.now() >= expiresAt);
 
   return (
     <AuthContext.Provider
@@ -300,6 +310,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
         logout,
         getValidAccessToken,
         isLoading,
+        isRefreshing,
         authUrl,
         pkceState,
         handleRedirect,
