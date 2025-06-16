@@ -83,17 +83,17 @@ export default function AccountEdit() {
   }, [isLoggedIn]);
 
   // Profile field editing modal
-    const openEditModal = (field: string) => {
-      setEditField(field);
-      if (field === "firstName" || field === "lastName") {
-        setNameForm({
-          firstName: customer?.firstName || "",
-          lastName: customer?.lastName || "",
-        });
-      }
-      setEditModalVisible(true);
-    };
-  
+  const openEditModal = (field: string) => {
+    setEditField(field);
+    if (field === "firstName" || field === "lastName") {
+      setNameForm({
+        firstName: customer?.firstName || "",
+        lastName: customer?.lastName || "",
+      });
+    }
+    setEditModalVisible(true);
+  };
+
 
   const closeEditModal = () => {
     setEditModalVisible(false);
@@ -109,6 +109,7 @@ export default function AccountEdit() {
   };
 
   const handleEditAddress = (address: Address, idx: string) => {
+    console.log("id of the address", idx);
     setAddressModalMode("edit");
     setAddressEditData({
       ...address,
@@ -185,19 +186,19 @@ export default function AccountEdit() {
   };
 
   const handleSaveName = async () => {
-  setSavingName(true);
-  try {
-    const token = await getValidAccessToken();
-    if (!token) throw new Error("Not authenticated");
-    await updateCustomerName(token, nameForm.firstName, nameForm.lastName);
-    setEditModalVisible(false);
-    await refreshProfile();
-  } catch (err: any) {
-    Alert.alert("Error", err?.message || "Failed to update name.");
-  } finally {
-    setSavingName(false);
-  }
-};
+    setSavingName(true);
+    try {
+      const token = await getValidAccessToken();
+      if (!token) throw new Error("Not authenticated");
+      await updateCustomerName(token, nameForm.firstName, nameForm.lastName);
+      setEditModalVisible(false);
+      await refreshProfile();
+    } catch (err: any) {
+      Alert.alert("Error", err?.message || "Failed to update name.");
+    } finally {
+      setSavingName(false);
+    }
+  };
 
 
   // Address Modal UI component
@@ -399,7 +400,7 @@ export default function AccountEdit() {
                   {address.address2 ? `, ${address.address2}` : ""}
                 </Text>
                 <Text className="text-sm text-gray-600">
-                  {address.city}, {address.province}, {address.country}
+                  {address.city}, {address.zoneCode}, {address.territoryCode}
                   {"\n"}
                   {address.zip}
                 </Text>
@@ -499,7 +500,7 @@ export default function AccountEdit() {
                   <Text className="text-base font-mBold">
                     {customer.defaultAddress.address1}{customer.defaultAddress.address2 ? `, ${customer.defaultAddress.address2}` : ""}
                     {`\n`}
-                    {customer.defaultAddress.city}, {customer.defaultAddress.province}, {customer.defaultAddress.country}
+                    {customer.defaultAddress.city}, {customer.defaultAddress.zoneCode}, {customer.defaultAddress.territoryCode}
                     {`\n`}
                     {customer.defaultAddress.zip}
                     {customer.defaultAddress.phoneNumber ? `\n${customer.defaultAddress.phoneNumber}` : ""}
@@ -508,9 +509,20 @@ export default function AccountEdit() {
                   <Text className="text-gray-400">No address set</Text>
                 )}
               </View>
-              <TouchableOpacity onPress={() => openEditModal("address")}>
-                <Ionicons name="pencil" size={18} color="#24272a" />
-              </TouchableOpacity>
+              {customer.defaultAddress ? (
+                <TouchableOpacity
+                  onPress={() => handleEditAddress(customer.defaultAddress! , customer.defaultAddress!.id ?? "")}
+                >
+                  <Ionicons name="pencil" size={18} color="#24272a" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={handleAddAddress}
+                >
+                  <Ionicons name="add-outline" size={18} color="#24272a" />
+                </TouchableOpacity>
+              )}
+
             </View>
             {/* --- All Addresses --- */}
             <AddressSection addresses={customer.addresses?.edges.map(e => e.node) || []} />
@@ -520,24 +532,48 @@ export default function AccountEdit() {
 
       {/* --- Edit Profile Modal (fields: name, email, etc.) --- */}
       <Modal
-        visible={editModalVisible}
+        visible={editModalVisible && (editField === "firstName" || editField === "lastName")}
         animationType="slide"
         onRequestClose={closeEditModal}
         transparent
       >
-        <View className="flex-1 bg-black/40 justify-center items-center">
-          <View className="bg-white rounded-2xl p-6 min-w-[320px] shadow-lg">
-            <Text className="text-xl font-bold mb-4 capitalize">Edit {editField}</Text>
-            {/* Render form for the selected field here */}
-            <Text className="text-gray-500">Updating {editField} coming soon...</Text>
-            <TouchableOpacity
-              onPress={closeEditModal}
-              className="mt-6 py-2 px-4 bg-darkPrimary rounded-lg"
-            >
-              <Text className="text-white text-lg font-semibold">Close</Text>
-            </TouchableOpacity>
+        <KeyboardAvoidingView
+          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.25)", justifyContent: "center", alignItems: "center" }}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+          <View className="bg-white rounded-2xl p-6 min-w-[320px] shadow-lg w-11/12 max-w-xl">
+            <Text className="text-xl font-bold mb-4">Edit Name</Text>
+            <TextInput
+              value={nameForm.firstName}
+              onChangeText={text => setNameForm(f => ({ ...f, firstName: text }))}
+              placeholder="First Name"
+              className="border border-gray-300 rounded-md p-2 mb-4"
+              autoCapitalize="words"
+            />
+            <TextInput
+              value={nameForm.lastName}
+              onChangeText={text => setNameForm(f => ({ ...f, lastName: text }))}
+              placeholder="Last Name"
+              className="border border-gray-300 rounded-md p-2 mb-4"
+              autoCapitalize="words"
+            />
+            <View className="flex-row justify-between">
+              <TouchableOpacity
+                onPress={closeEditModal}
+                className="bg-gray-300 py-2 px-4 rounded-lg"
+              >
+                <Text>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSaveName}
+                className="bg-darkPrimary py-2 px-4 rounded-lg"
+                disabled={savingName}
+              >
+                <Text className="text-white font-bold">{savingName ? "Saving..." : "Save"}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* --- Address Add/Edit Modal --- */}
