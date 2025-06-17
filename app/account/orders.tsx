@@ -6,7 +6,38 @@ import { fetchCustomerOrders } from "@/lib/shopifyQueries";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
-import formatDate from "@/utilities/formatDate"; // your custom date function
+import formatDate from "@/utilities/formatDate";
+import formatPrice from "@/utilities/formatPrice";
+
+
+interface FulfillmentLineItem {
+  lineItem: {
+    id: string;
+  };
+  quantity: number;
+}
+
+interface Fulfillment {
+  id: string;
+  status: string;
+  trackingInformation?: {
+    number: string;
+    url: string;
+  }[];
+  fulfillmentLineItems: {
+    edges: {
+      node: FulfillmentLineItem;
+    }[];
+  };
+}
+
+interface LineItemNode {
+  id: string;
+  title: string;
+  quantity: number;
+  image?: { url: string };
+  variantTitle?: string;
+}
 
 interface Order {
   id: string;
@@ -15,58 +46,27 @@ interface Order {
   processedAt: string;
   financialStatus: string;
   totalPrice: {
-     amount: string; 
-     currencyCode: string;
+    amount: string;
+    currencyCode: string;
   };
   lineItems: {
-    edges: { 
-      node: { 
-         title: string; 
-         quantity: number; 
-         image?: { url: string }; 
-         variantTitle?: string } 
-   }[];
+    edges: { node: LineItemNode }[];
   };
   fulfillments: {
-      edges: {
-         node: {
-            id: string;
-            status: string;
-            trackingInformation?: {
-               number: number;
-               url: string;
-            }
-            fulfillmentLineItems: {
-               edges: {
-                  node: {
-                   lineItem: {
-                     id: string;
-                   }
-                   quantity: number;
-                  }
-               }
-            }
-         }
-      }[];
-   };
+    edges: { node: Fulfillment }[];
+  };
 }
 
-export default function Orders() {
-  const { isLoggedIn, getValidAccessToken } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
 
-
-function getOrderFulfillmentStatus(order: any) {
+function getOrderFulfillmentStatus(order: Order): string {
   const lineItems = order.lineItems?.edges?.map(e => e.node) || [];
   const fulfillments = order.fulfillments?.edges?.map(e => e.node) || [];
 
   // Map lineItem.id => fulfilledQuantity
-  const fulfilledQuantities = {};
+  const fulfilledQuantities: Record<string, number> = {};
 
-  fulfillments.forEach((fulfillment: any) => {
-    fulfillment.fulfillmentLineItems?.edges?.forEach((edge: any) => {
+  fulfillments.forEach((fulfillment) => {
+    fulfillment.fulfillmentLineItems?.edges?.forEach((edge) => {
       const liId = edge.node.lineItem?.id;
       if (!liId) return;
       fulfilledQuantities[liId] = (fulfilledQuantities[liId] || 0) + edge.node.quantity;
@@ -87,6 +87,12 @@ function getOrderFulfillmentStatus(order: any) {
   return "UNFULFILLED";
 }
 
+// ------------- Main Component -------------
+export default function Orders() {
+  const { isLoggedIn, getValidAccessToken } = useAuth();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -95,9 +101,8 @@ function getOrderFulfillmentStatus(order: any) {
       try {
         const token = await getValidAccessToken();
         if (!token) throw new Error("Not authenticated");
-       
-        const fetchedOrders = await fetchCustomerOrders(token);
-       
+
+        const fetchedOrders: Order[] = await fetchCustomerOrders(token);
         setOrders(fetchedOrders);
       } catch (err: any) {
         setLoadError(err?.message || "Failed to load orders");
@@ -107,37 +112,35 @@ function getOrderFulfillmentStatus(order: any) {
     };
 
     if (isLoggedIn) loadOrders();
+  }, [isLoggedIn, getValidAccessToken]);
 
-  }, [isLoggedIn]);
-
-  const renderOrder = ({ item }: { item: Order }) => 
-  {
-   
-   return (
+  const renderOrder = ({ item }: { item: Order }) => (
     <TouchableOpacity
       className="mb-4 p-4 rounded-xl border border-gray-200 bg-gray-50"
       onPress={() => router.push(`/orders/${encodeURIComponent(item.id)}`)}
     >
       <View className="flex-row justify-between items-center mb-1">
-        <Text className="font-mBold text-lg">{`Order #${item.number}`}</Text>
+        <View className="flex-row items-center flex-wrap" style={{ flex: 1 }}>
+          <Text className="font-mBold text-lg">{`Order #${item.number}`}</Text>
+          {item.financialStatus && item.financialStatus !== "PAID" && (
+            <View className="ml-2 bg-amber-100 px-2 py-0.5 rounded">
+              <Text className="text-xs text-amber-800 font-mMedium">
+                {item.financialStatus.replace(/_/g, " ")}
+              </Text>
+            </View>
+          )}
+        </View>
         <Text className="text-xs text-gray-500">{formatDate(item.processedAt)}</Text>
       </View>
       <Text className="text-sm text-gray-700 mb-2">
-        {`Fulfillment Status: ${getOrderFulfillmentStatus(item)} ${"  "}`}
+        {`Fulfillment Status: ${getOrderFulfillmentStatus(item)}  `}
       </Text>
       <Text className="text-base font-mBold">
-        {`Total: ${item.totalPrice.amount} ${item.totalPrice.currencyCode}`}
+        {`Total: ${formatPrice(item.totalPrice.amount)}`}
       </Text>
-      <View className="flex-row mt-2 flex-wrap gap-2">
-        {item.lineItems.edges.map(({ node }, idx) => (
-          <View key={idx} className="mr-2">
-            <Text className="text-xs">{`${node.title} x${node.quantity}`}</Text>
-          </View>
-        ))}
-      </View>
+      
     </TouchableOpacity>
-   );
-  }
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-white">
