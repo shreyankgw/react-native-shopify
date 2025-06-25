@@ -54,10 +54,7 @@ export default function Search() {
         <TouchableOpacity
         className="px-4 py-2 mr-3 bg-gray-100 rounded-full"
         key={item}
-        onPress={() => {
-            setSearchQuery(item);
-            fetchSearchResults(item);
-        }}
+        onPress={() => router.push(`/search/${item}`)}
     >
         <Text className="text-brandText">{item}</Text>
     </TouchableOpacity>
@@ -155,7 +152,7 @@ export default function Search() {
                             <View className="px-4">
                                 {!searchQuery && (
                                     <>
-                                      <Text className="text-lg font-mBold px-4 mb-2">Trending Searches</Text>
+                                      <Text className="text-lg font-mBold px-4 mb-2">Trending Searches 📈</Text>
                                       <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
                                         {TRENDING_SEARCHES.map(renderTrendingSearch)}
                                       </ScrollView>
@@ -163,7 +160,7 @@ export default function Search() {
                                 )}
                                 {!searchQuery && (
                                     <>
-                                      <Text className="text-lg font-mBold px-4 mb-2">Popular Categories</Text>
+                                      <Text className="text-lg font-mBold px-4 mb-2">Popular Categories ✨</Text>
 
                                       <FlatList data={POPULAR_CATEGORIES} 
                                                 renderItem={renderCategoryItem} 

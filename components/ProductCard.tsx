@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { router } from "expo-router";
-import renderStars from "@/utilities/renderStars";
 import formatPrice from "@/utilities/formatPrice";
 import { calculatePercentageOff } from "@/utilities/percentOff";
 import FractionalStarRating from "./FractionalStarRating";

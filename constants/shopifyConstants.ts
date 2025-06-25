@@ -14,6 +14,25 @@ export const CANADIAN_PROVINCES = [
   { label: "Yukon", value: "YT" }
 ];
 
+export const catalogByVoltageTiles = [
+    {
+        title: "80V",
+        imageUrl: "https://cdn.shopify.com/s/files/1/0632/6331/0018/files/80V_Platform_Icon_V1.png?v=1750868885"
+    },
+    {
+        title: "60V",
+        imageUrl: "https://cdn.shopify.com/s/files/1/0632/6331/0018/files/60V_Platform_Icon_V1.png?v=1750868885"
+    },
+    {
+        title: "40V",
+        imageUrl: "https://cdn.shopify.com/s/files/1/0632/6331/0018/files/40V_Platform_Icon_V1.png?v=1750868885"
+    },
+    {
+        title: "24V/48V",
+        imageUrl: "https://cdn.shopify.com/s/files/1/0632/6331/0018/files/24V-48V_Platform_Icon_V1.png?v=1750868885"
+    }
+];
+
 export const menuItems = [
     {
         title: 'Shop By Voltage',
