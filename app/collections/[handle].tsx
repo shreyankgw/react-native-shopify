@@ -26,6 +26,7 @@ interface CollectionResponse {
 
 export default function Collection() {
   const { handle } = useLocalSearchParams();
+  const handleStr = Array.isArray(handle) ? handle[0] : handle;
   const [collection, setCollection] = useState<CollectionResponse>();
   const [products, setProducts] = useState<Product[]>([]);
   const [filters, setFilters] = useState<any[]>([]);
@@ -46,7 +47,7 @@ export default function Collection() {
     const shopifyFilters = buildShopifyFilters(selectedFilters, filters);
 
       const collectionData: CollectionResponse = await fetchCollection(
-        handle,
+        handleStr,
         24,
         null,
         sortBy,
@@ -84,7 +85,7 @@ export default function Collection() {
       const shopifyFilters = buildShopifyFilters(selectedFilters, filters);
 
       const collectionData: CollectionResponse = await fetchCollection(
-        handle,
+        handleStr,
         24,
         endCursor,
         sortBy,

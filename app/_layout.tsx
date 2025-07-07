@@ -6,6 +6,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {storage} from "@/lib/storage";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "@/context/authContext";
+import { CartProvider } from "@/context/cartContext";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -43,6 +45,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
     <AuthProvider>
+    <CartProvider>
     <GestureHandlerRootView style={{ flex: 1 }}>
     <Stack>
        <Stack.Screen name="welcome" options={{ headerShown: false }}></Stack.Screen>
@@ -56,6 +59,7 @@ export default function RootLayout() {
        <Stack.Screen name="account/orders" options={{ headerShown: false }}></Stack.Screen>
     </Stack>
     </GestureHandlerRootView>
+    </CartProvider>
     </AuthProvider>
     </SafeAreaProvider>
   );

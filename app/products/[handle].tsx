@@ -12,6 +12,7 @@ import FractionalStarRating from "@/components/FractionalStarRating";
 import JudgeMeReviewComponent from "@/components/JudgemeReviewComponent";
 import JudgeMeWriteReviewModal from "@/components/JudgemeReviewModal";
 import parseSpecificationString from "@/utilities/parseProductSpecifications";
+import { useCart } from "@/context/cartContext";
 
 configureReanimatedLogger({
   strict: false
@@ -52,6 +53,8 @@ export default function Product() {
   const { handle } = useLocalSearchParams();
   const [index, setIndex] = useState(0);
   const [reviewmodalvisible, setReviewModalVisible] = useState(false);
+
+  const { addToCart, loading } = useCart();
 
   useEffect(() => {
     const getProduct = async () => {
@@ -316,7 +319,17 @@ export default function Product() {
       </ScrollView>
       <View className="p-4 border-t border-gray-200 flex flex-row items-center justify-between">
         <TouchableOpacity onPress={() => { console.log("Buy Now Clicked") }} activeOpacity={0.7} className="bg-brandLight rounded-xl flex justify-center items-center min-h-[44px] flex-1 mr-4"><Text className="font-mBold text-lg">Buy Now</Text></TouchableOpacity>
-        <GwtButton title="Add To Cart" handlePress={() => { console.log("Add To Cart Clicked") }} containerStyles="flex-1" />
+        <GwtButton
+          title={loading ? "Adding..." : "Add To Cart"}
+          handlePress={async () => {
+            if (product && product.variants && product.variants.edges.length > 0) {
+              const variantId = product.variants.edges[0].node.id;
+              await addToCart(variantId, 1);
+              // Optional: toast, modal, etc.
+            }
+          }}
+          containerStyles="flex-1"
+        />
       </View>
     </SafeAreaView>
   );
