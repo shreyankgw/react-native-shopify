@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Image, Linking } from "react-
 import { useCart } from "@/context/cartContext";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import formatPrice from "@/utilities/formatPrice";
 
 export default function CartPage() {
   const { cart, loading, removeFromCart, checkoutUrl, refreshCart } = useCart();
@@ -42,13 +43,14 @@ export default function CartPage() {
   // Helper function to render a cart line
   const renderCartLine = (line: any) => {
     const variant = line.node.merchandise;
+    
     return (
       <View
         key={line.node.id}
         className="flex-row items-center bg-white border border-gray-200 rounded-xl p-3 mb-4"
       >
         <Image
-          source={{ uri: variant.product.featuredImage?.url || "https://cdn.shopify.com/s/files/1/0632/6331/0018/files/no-image.png" }}
+          source={{ uri: variant.product?.featuredImage?.url || "https://cdn.shopify.com/s/files/1/0632/6331/0018/files/no-image.png" }}
           className="w-20 h-20 rounded-lg mr-4 bg-gray-100"
           resizeMode="cover"
         />
@@ -57,16 +59,17 @@ export default function CartPage() {
             {variant.product?.title || "Product"}
           </Text>
           <Text className="text-gray-500 text-xs mb-2">Qty: {line.node.quantity}</Text>
-          <Text className="text-green-700 font-mBold text-sm">
-            ${(variant.price?.amount ?? "0.00")}
+          <Text className={`${variant.compareAtPrice?.amount ? "text-red-700" : "text-gray-700"} font-mBold text-sm`}>
+            {(formatPrice(variant.price?.amount) ?? "$0.00")} {variant.compareAtPrice?.amount && <Text className="text-gray-400 line-through text-sm font-mSemiBold ml-2">{(formatPrice(variant.compareAtPrice?.amount) ?? "$0.00")}</Text>}
           </Text>
+          
         </View>
         <TouchableOpacity
           className="ml-3"
           onPress={() => handleRemove(line.node.id)}
           accessibilityLabel="Remove from cart"
         >
-          <Ionicons name="trash-outline" size={24} color="#EF4444" />
+          <Ionicons name="trash-outline" size={20} color="#EF4444" />
         </TouchableOpacity>
       </View>
     );
@@ -92,9 +95,13 @@ export default function CartPage() {
           <View className="flex-row items-center justify-between mb-4">
             <Text className="text-lg font-mBold text-gray-700">Subtotal</Text>
             <Text className="text-lg font-mBold text-gray-700">
-              ${subtotal?.toFixed(2) ?? "0.00"}
+              {subtotal ? formatPrice(subtotal) : "$0.00" }
             </Text>
           </View>
+          <Text className="text-sm text-gray-500 mb-2">
+            Taxes, shipping and discounts calculated at checkout.
+          </Text>
+
           <TouchableOpacity
             className="bg-green-700 py-3 rounded-xl items-center"
             onPress={() => {

@@ -41,6 +41,9 @@ interface Product {
   rating_count?: {
     value: string; // e.g. "13"
   };
+  availableForSale: Boolean;
+  totalInventory: number;
+  tags?: [string];
 }
 
 
@@ -53,8 +56,14 @@ export default function Product() {
   const { handle } = useLocalSearchParams();
   const [index, setIndex] = useState(0);
   const [reviewmodalvisible, setReviewModalVisible] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const { addToCart, loading } = useCart();
+
+  const canBuy = product?.availableForSale && product.totalInventory >= 10;
+
+  const costcoOnly = Array.isArray(product?.tags) && product?.tags.includes("Costco");
+
 
   useEffect(() => {
     const getProduct = async () => {
@@ -318,19 +327,42 @@ export default function Product() {
 
       </ScrollView>
       <View className="p-4 border-t border-gray-200 flex flex-row items-center justify-between">
-        <TouchableOpacity onPress={() => { console.log("Buy Now Clicked") }} activeOpacity={0.7} className="bg-brandLight rounded-xl flex justify-center items-center min-h-[44px] flex-1 mr-4"><Text className="font-mBold text-lg">Buy Now</Text></TouchableOpacity>
-        <GwtButton
+        <TouchableOpacity disabled={!canBuy || costcoOnly} onPress={() => { console.log("Buy Now Clicked") }} activeOpacity={1} className="bg-brandLight rounded-xl flex justify-center items-center min-h-[44px] flex-1 mr-4 disabled:opacity-50"><Text className="font-mBold text-lg">Buy Now</Text></TouchableOpacity>
+        {canBuy && !costcoOnly && <GwtButton
           title={loading ? "Adding..." : "Add To Cart"}
           handlePress={async () => {
             if (product && product.variants && product.variants.edges.length > 0) {
               const variantId = product.variants.edges[0].node.id;
               await addToCart(variantId, 1);
               // Optional: toast, modal, etc.
+              setShowToast(true);
+              setTimeout(() => setShowToast(false), 3000);
             }
           }}
           containerStyles="flex-1"
-        />
+        />}
+        {canBuy && costcoOnly && <GwtButton
+          title="Sold Out"
+          containerStyles="flex-1"
+          isLoading
+        />}
+        {!canBuy && <GwtButton
+          title="Sold Out"
+          containerStyles="flex-1"
+          isLoading
+        />}
+
       </View>
+
+      {showToast && (
+        <View className="absolute bottom-32 left-0 right-0 items-center z-50">
+          <View className="bg-primary px-6 py-3 rounded-xl shadow flex flex-row justify-center items-center">
+            <Ionicons name="checkmark-circle-outline" size={20} color="#ffffff" className="mr-2" />
+            <Text className="text-white font-mBold">Added to cart!</Text>
+          </View>
+        </View>
+      )}
+
     </SafeAreaView>
   );
 }

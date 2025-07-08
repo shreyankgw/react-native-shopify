@@ -94,15 +94,31 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       try {
         let id = cartId;
+        let lines = [
+        {
+          quantity,
+          merchandiseId: variantId,
+        },
+       ];
+       let buyerIdentity: any = undefined;
+       let customerLoggedIn = storage.getString("access_token");
+       if(customerLoggedIn){
+        buyerIdentity =  { customerAccessToken: customerLoggedIn };
+       }
         if (!id) {
           // Create cart if doesn't exist
-          const newCart = await createCart();
+          const newCart = await createCart(lines, buyerIdentity);
           id = newCart.id;
           persistCartId(id);
           setCart(newCart);
+          await refreshCart()
+        }else{
+          //cart exists already, just update the cart
+         const updatedCart = await addLinesToCart(id!, lines);
+         setCart(updatedCart);
+         await refreshCart()
         }
-        const updatedCart = await addLinesToCart(id!, { variantId, quantity });
-        setCart(updatedCart);
+       
       } catch (err) {
         console.error("Error adding to cart:", err);
       } finally {
