@@ -146,7 +146,8 @@ if (isLoading || isRefreshing) {
   if(!isLoggedIn){
     return(
        <SafeAreaView className="flex-1 items-center justify-center p-5 bg-white">
-        <Text className="text-2xl font-bold text-gray-800 mb-8">Welcome, Guest!</Text>
+        <Text className="text-2xl font-mBold text-gray-800 mb-8">Welcome, Guest!</Text>
+   
         <TouchableOpacity
           onPress={login}
           disabled={isLoading || isRefreshing || showWebView}
@@ -154,6 +155,7 @@ if (isLoading || isRefreshing) {
         >
           <Text className="text-white font-semibold text-lg">Login / Signup</Text>
         </TouchableOpacity>
+             <Text className="text-base text-gray-500 mt-8 mx-6">Note: If you have already placed order with us before, use that email to login to view your order details. If not, please feel free to signup.</Text>
       </SafeAreaView>
     );
   }

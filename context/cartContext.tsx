@@ -15,6 +15,7 @@ type CartContextType = {
   updateBuyerIdentity: (buyerIdentity: any) => Promise<void>;
   checkoutUrl: string | null;
   refreshCart: () => Promise<void>;
+  clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -162,6 +163,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     [cartId]
   );
 
+  //clear cart if checkout is complete
+  const clearCart = useCallback(() => {
+  storage.delete(CART_ID_KEY);
+  setCartId(null);
+  setCart(null);
+  setCheckoutUrl(null);
+}, []);
+
   // Context value
   const totalQuantity = cart?.totalQuantity ?? 0;
   const value = {
@@ -175,6 +184,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     updateBuyerIdentity: handleUpdateBuyerIdentity,
     checkoutUrl,
     refreshCart,
+    clearCart
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

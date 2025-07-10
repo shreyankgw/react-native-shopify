@@ -7,6 +7,7 @@ import {storage} from "@/lib/storage";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "@/context/authContext";
 import { CartProvider } from "@/context/cartContext";
+import { ShopifyCheckoutSheetProvider } from "@shopify/checkout-sheet-kit";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -44,6 +45,7 @@ export default function RootLayout() {
    
   return (
     <SafeAreaProvider>
+    <ShopifyCheckoutSheetProvider>
     <AuthProvider>
     <CartProvider>
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -61,6 +63,7 @@ export default function RootLayout() {
     </GestureHandlerRootView>
     </CartProvider>
     </AuthProvider>
+    </ShopifyCheckoutSheetProvider>
     </SafeAreaProvider>
   );
 }

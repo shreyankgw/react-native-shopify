@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Image, Linking } from "react-native";
 import { useCart } from "@/context/cartContext";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import formatPrice from "@/utilities/formatPrice";
+import { CheckoutCompletedEvent, useShopifyCheckoutSheet } from "@shopify/checkout-sheet-kit";
 
 export default function CartPage() {
-  const { cart, loading, removeFromCart, checkoutUrl, refreshCart } = useCart();
+  const { cart, loading, removeFromCart, checkoutUrl, refreshCart, clearCart } = useCart();
+  const shopifyCheckout = useShopifyCheckoutSheet();
+
+  useEffect(() => {
+    const unsub = shopifyCheckout.addEventListener('completed', (event: CheckoutCompletedEvent) => {
+      const orderID = event.orderDetails.id;
+      console.log('order details', event.orderDetails);
+      clearCart();
+      //after that send them to their order details page within the app or send them back to the homepage.
+    });
+    return () => {
+      unsub?.remove();
+    };
+
+  }, [shopifyCheckout]);
 
   // deleting the line item
   const handleRemove = async (lineId: string) => {
@@ -75,12 +90,6 @@ export default function CartPage() {
     );
   };
 
-  // Calculate subtotal (optional: may come from cart object)
-  const subtotal = cart?.lines?.edges?.reduce((sum: number, line: any) => {
-    const amount = parseFloat(line.node.merchandise?.price?.amount || "0");
-    return sum + amount * line.node.quantity;
-  }, 0);
-
   return (
     <View className="flex-1 bg-white">
       <ScrollView
@@ -95,7 +104,7 @@ export default function CartPage() {
           <View className="flex-row items-center justify-between mb-4">
             <Text className="text-lg font-mBold text-gray-700">Subtotal</Text>
             <Text className="text-lg font-mBold text-gray-700">
-              {subtotal ? formatPrice(subtotal) : "$0.00" }
+              {cart.cost?.subtotalAmount?.amount ? formatPrice(cart.cost?.subtotalAmount?.amount) : "$0.00" }
             </Text>
           </View>
           <Text className="text-sm text-gray-500 mb-2">
@@ -105,7 +114,7 @@ export default function CartPage() {
           <TouchableOpacity
             className="bg-green-700 py-3 rounded-xl items-center"
             onPress={() => {
-              if (checkoutUrl) Linking.openURL(checkoutUrl);
+              if (checkoutUrl) shopifyCheckout.present(checkoutUrl);
             }}
             disabled={!checkoutUrl}
           >

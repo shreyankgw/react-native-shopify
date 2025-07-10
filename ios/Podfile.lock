@@ -100,6 +100,7 @@ PODS:
     - React-RCTText (= 0.76.9)
     - React-RCTVibration (= 0.76.9)
   - React-callinvoker (0.76.9)
+  - React-Codegen (0.1.0)
   - React-Core (0.76.9):
     - glog
     - hermes-engine
@@ -1893,6 +1894,29 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNShopifyCheckoutSheetKit (3.2.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ShopifyCheckoutSheetKit (~> 3.1.2)
+    - Yoga
   - RNSVG (15.8.0):
     - DoubleConversion
     - glog
@@ -1936,6 +1960,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - ShopifyCheckoutSheetKit (3.1.2)
   - SocketRocket (0.7.1)
   - Yoga (0.0.0)
 
@@ -2028,11 +2053,14 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNShopifyCheckoutSheetKit (from `../node_modules/@shopify/checkout-sheet-kit`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
+    - React-Codegen
+    - ShopifyCheckoutSheetKit
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -2209,6 +2237,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNShopifyCheckoutSheetKit:
+    :path: "../node_modules/@shopify/checkout-sheet-kit"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -2244,6 +2274,7 @@ SPEC CHECKSUMS:
   RCTTypeSafety: e7678bd60850ca5a41df9b8dc7154638cb66871f
   React: 4641770499c39f45d4e7cde1eba30e081f9d8a3d
   React-callinvoker: 4bef67b5c7f3f68db5929ab6a4d44b8a002998ea
+  React-Codegen: 4b8b4817cea7a54b83851d4c1f91f79aa73de30a
   React-Core: 0a06707a0b34982efc4a556aff5dae4b22863455
   React-CoreModules: 907334e94314189c2e5eed4877f3efe7b26d85b0
   React-cxxreact: 3a1d5e8f4faa5e09be26614e9c8bbcae8d11b73d
@@ -2301,7 +2332,9 @@ SPEC CHECKSUMS:
   RNGestureHandler: 3e17c0c9ceb401041b0e64c8e4c8a057da978a9d
   RNReanimated: c835671f6cdb8a72eb9d6d1ccbec30ca9c6997b3
   RNScreens: 2856a2abe759a5a56946874f76372c9f033af19a
+  RNShopifyCheckoutSheetKit: b6f04da78fa29d97458fb5b268effaf67367fa53
   RNSVG: 81d52481cde97ce0dcc81a55b0310723817088d0
+  ShopifyCheckoutSheetKit: 5ae02dbed0047689b94c977bdcf6287752d17ce4
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: feb4910aba9742cfedc059e2b2902e22ffe9954a
 
