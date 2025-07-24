@@ -59,6 +59,8 @@ export default function RootLayout() {
        <Stack.Screen name="search/[query]" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="account/edit" options={{ headerShown: false }}></Stack.Screen>
        <Stack.Screen name="account/orders" options={{ headerShown: false }}></Stack.Screen>
+       <Stack.Screen name="policy" options={{ headerShown: false }}></Stack.Screen>
+         <Stack.Screen name="terms" options={{ headerShown: false }}></Stack.Screen>
     </Stack>
     </GestureHandlerRootView>
     </CartProvider>

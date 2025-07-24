@@ -112,12 +112,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           id = newCart.id;
           persistCartId(id);
           setCart(newCart);
-          await refreshCart()
+          setCheckoutUrl(newCart.checkoutUrl);
+          await refreshCart(id);
         }else{
           //cart exists already, just update the cart
          const updatedCart = await addLinesToCart(id!, lines);
          setCart(updatedCart);
-         await refreshCart()
+         setCheckoutUrl(updatedCart.checkoutUrl);
+         await refreshCart(id)
         }
        
       } catch (err) {

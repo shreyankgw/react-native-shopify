@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image, Linking } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import { useCart } from "@/context/cartContext";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -75,7 +75,7 @@ export default function CartPage() {
           </Text>
           <Text className="text-gray-500 text-xs mb-2">Qty: {line.node.quantity}</Text>
           <Text className={`${variant.compareAtPrice?.amount ? "text-red-700" : "text-gray-700"} font-mBold text-sm`}>
-            {(formatPrice(variant.price?.amount) ?? "$0.00")} {variant.compareAtPrice?.amount && <Text className="text-gray-400 line-through text-sm font-mSemiBold ml-2">{(formatPrice(variant.compareAtPrice?.amount) ?? "$0.00")}</Text>}
+            {(formatPrice(variant.price?.amount ?? 0) ?? "$0.00")} {variant.compareAtPrice?.amount && <Text className="text-gray-400 line-through text-sm font-mSemiBold ml-2">{(formatPrice(variant.compareAtPrice?.amount ?? 0) ?? "$0.00")}</Text>}
           </Text>
           
         </View>
@@ -104,7 +104,7 @@ export default function CartPage() {
           <View className="flex-row items-center justify-between mb-4">
             <Text className="text-lg font-mBold text-gray-700">Subtotal</Text>
             <Text className="text-lg font-mBold text-gray-700">
-              {cart.cost?.subtotalAmount?.amount ? formatPrice(cart.cost?.subtotalAmount?.amount) : "$0.00" }
+              {cart.cost?.subtotalAmount?.amount ? formatPrice(cart.cost?.subtotalAmount?.amount ?? 0) : "$0.00" }
             </Text>
           </View>
           <Text className="text-sm text-gray-500 mb-2">
