@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { storage } from '@/lib/storage';
+import { Image } from 'expo-image';
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -11,7 +12,9 @@ export default function WelcomeScreen() {
     <View className="flex-1 bg-white px-4 justify-between">
       {/* Header Section */}
       <View className="flex items-center pt-16">
-        <Image source={require("@/assets/images/gw_green.png")} resizeMode="contain" className="w-[300px] h-[80px]" />
+        <View className="w-[300px] h-[80px]">
+          <Image source={require("@/assets/images/gw_green.png")} contentFit="contain" style={{ width: '100%', height: '100%' }} transition={350} accessibilityRole='image' />
+        </View>
       </View>
 
       {/* Features Section */}

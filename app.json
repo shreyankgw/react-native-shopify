@@ -10,11 +10,16 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.greenworks"
+      "bundleIdentifier": "com.anonymous.greenworks",
+      "icon": {
+        "light": "./assets/images/ios-light.png",
+        "dark": "./assets/images/ios-dark.png",
+        "tinted": "./assets/images/ios-tinted.png"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon-new.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.greenworks"
@@ -29,7 +34,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash-icon-light.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -38,6 +43,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "18657427-67ff-4e36-a486-0a41b9594c4d"
+      }
+    },
+    "owner": "greenworks-canada"
   }
 }

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, ScrollView, Image, TouchableOpacity, Dimensions } from "react-native";
+import { Text, View, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import { router } from "expo-router";
 import ProductCard from "@/components/ProductCard";
 import FadeIn from "@/components/FadeInAnimation";
 import { catalogSections, homepageSections } from "@/lib/shopifyQueries";
 import { catalogByVoltageTiles } from "@/constants/shopifyConstants";
+import { Image } from "expo-image";
 
 const { width } = Dimensions.get('window');
 
@@ -128,11 +129,14 @@ export default function Catalog() {
                       }
                       accessibilityLabel={tile.title}
                     >
-                      <View className="relative items-center justify-center mb-2 w-full">
+                      <View className="relative items-center justify-center mb-2 w-full aspect-square bg-gray-100 rounded-full">
                         <Image
                           source={{ uri: tile.imageUrl }}
-                          className="w-full aspect-square bg-gray-100 rounded-full"
-                          resizeMode="contain"
+                          style={{ width: '100%', height: '100%' }}
+                          contentFit="contain"
+                          transition={350}
+                          accessibilityRole="image"
+                          accessibilityLabel={tile.title}
                         />
                       </View>
 
@@ -173,7 +177,7 @@ export default function Catalog() {
                         accessible={true}
                         accessibilityLabel={collection.title}
                       >
-                        <View className="relative items-center justify-center">
+                        <View className="relative items-center justify-center w-full aspect-square">
                           {collection.categoryImage && (
                             <View
                               className="bg-gray-100 rounded-full absolute"
@@ -187,8 +191,10 @@ export default function Catalog() {
                           {collection.categoryImage && (
                             <Image
                               source={{ uri: collection.categoryImage.reference.image.url }}
-                              className="w-full aspect-square"
-                              resizeMode="contain"
+                              style={{ width: '100%', height: '100%' }}
+                              contentFit="contain"
+                              transition={350}
+                              accessibilityRole="image"
                             />
                           )}
                         </View>
@@ -203,9 +209,6 @@ export default function Catalog() {
             </View>
           </View>
         </FadeIn>
-
-
-
       </ScrollView>
     </View>
   );

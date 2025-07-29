@@ -16,6 +16,8 @@ type CartContextType = {
   checkoutUrl: string | null;
   refreshCart: () => Promise<void>;
   clearCart: () => void;
+  orderDetails: any | null;
+  setOrderDetails: (details: any) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -31,6 +33,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [orderDetails, setOrderDetails] = useState<any | null>(null);
 
   // Utility: persist and hydrate cart id
   const persistCartId = useCallback((id: string | null) => {
@@ -186,7 +189,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     updateBuyerIdentity: handleUpdateBuyerIdentity,
     checkoutUrl,
     refreshCart,
-    clearCart
+    clearCart,
+    orderDetails,
+    setOrderDetails
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

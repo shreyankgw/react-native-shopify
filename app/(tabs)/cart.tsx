@@ -1,21 +1,24 @@
 import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useCart } from "@/context/cartContext";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import formatPrice from "@/utilities/formatPrice";
 import { CheckoutCompletedEvent, useShopifyCheckoutSheet } from "@shopify/checkout-sheet-kit";
-
+import { Image } from "expo-image";
 export default function CartPage() {
-  const { cart, loading, removeFromCart, checkoutUrl, refreshCart, clearCart } = useCart();
+  const { cart, loading, removeFromCart, checkoutUrl, refreshCart, clearCart, setOrderDetails } = useCart();
+  
   const shopifyCheckout = useShopifyCheckoutSheet();
 
   useEffect(() => {
     const unsub = shopifyCheckout.addEventListener('completed', (event: CheckoutCompletedEvent) => {
       const orderID = event.orderDetails.id;
       console.log('order details', event.orderDetails);
+      setOrderDetails(event.orderDetails);
       clearCart();
       //after that send them to their order details page within the app or send them back to the homepage.
+      router.replace("/orderDetails");
     });
     return () => {
       unsub?.remove();
@@ -64,11 +67,16 @@ export default function CartPage() {
         key={line.node.id}
         className="flex-row items-center bg-white border border-gray-200 rounded-xl p-3 mb-4"
       >
-        <Image
+        <View className="w-20 h-20 rounded-lg mr-4 bg-gray-100">
+         <Image
           source={{ uri: variant.product?.featuredImage?.url || "https://cdn.shopify.com/s/files/1/0632/6331/0018/files/no-image.png" }}
-          className="w-20 h-20 rounded-lg mr-4 bg-gray-100"
-          resizeMode="cover"
+          style={{ width: '100%', height: '100%' }}
+          contentFit="cover"
+          transition={350}
+          accessibilityRole="image"
         />
+        </View>
+        
         <View className="flex-1">
           <Text className="text-base font-mSemiBold mb-1" numberOfLines={2}>
             {variant.product?.title || "Product"}

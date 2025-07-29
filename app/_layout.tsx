@@ -1,4 +1,4 @@
-import { Stack, SplashScreen, useRootNavigationState, useRouter } from "expo-router";
+import { Stack, useRootNavigationState, useRouter } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect} from "react";
 import "@/global.css";
@@ -7,7 +7,8 @@ import {storage} from "@/lib/storage";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider } from "@/context/authContext";
 import { CartProvider } from "@/context/cartContext";
-import { ShopifyCheckoutSheetProvider } from "@shopify/checkout-sheet-kit";
+import { ShopifyCheckoutSheetProvider, Configuration, ColorScheme } from "@shopify/checkout-sheet-kit";
+import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -42,10 +43,22 @@ export default function RootLayout() {
   }, [fontsLoaded, navigationState?.stale]);
 
   if (!fontsLoaded && !error) return null;
+
+
+  const config: Configuration = {
+    colorScheme: ColorScheme.automatic,
+    title: "Secure Checkout",
+    colors: {
+      ios: {
+        backgroundColor: '#ffffff',
+        tintColor: '#24272a',
+      },
+    }
+  };
    
   return (
     <SafeAreaProvider>
-    <ShopifyCheckoutSheetProvider>
+    <ShopifyCheckoutSheetProvider configuration={config}>
     <AuthProvider>
     <CartProvider>
     <GestureHandlerRootView style={{ flex: 1 }}>
