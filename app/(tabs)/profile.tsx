@@ -6,6 +6,7 @@ import * as Linking from "expo-linking";
 import { fetchCustomerProfile } from "@/lib/shopifyQueries";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import RecentlyViewedProducts from "@/components/RecentlyViewedProducts";
 
 const SHOPIFY_REDIRECT_URL = Linking.createURL("callback");
 
@@ -34,6 +35,9 @@ export default function Profile() {
   const [showWebView, setShowWebView] = useState(false);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loadingCustomer, setLoadingCustomer] = useState(false);
+  /* 
+  // disabling this until we figure out the solution to send notification to users automatically
+  
   const [notificationPrefs, setNotificationPrefs] = useState({
         orderUpdates: true,
         promotions: false,
@@ -45,7 +49,7 @@ export default function Profile() {
         ...prev,
         [key]: !prev[key],
       }));
-  };
+  }; */
 
   useEffect(() => {
     if (authUrl) {
@@ -173,7 +177,7 @@ if (isLoading || isRefreshing) {
             <View className="flex flex-row items-center justify-between p-4 border-b-2 border-gray-200 w-full">
               <TouchableOpacity className="text-3xl font-mBold" onPress={() => router.back()}><Ionicons name="arrow-back-outline" size={24} color="black" /></TouchableOpacity>
               <Text className="text-xl font-mBold uppercase">{customer ? "Account" : "Login/Signup"}</Text>
-              <TouchableOpacity className="text-3xl font-mBold" onPress={() => console.log("help faq route for general enquiries")}><Ionicons name="information-circle-outline" size={24} color="black" /></TouchableOpacity>
+              <TouchableOpacity className="text-3xl font-mBold" onPress={() => router.push("/(tabs)/support")}><Ionicons name="information-circle-outline" size={24} color="black" /></TouchableOpacity>
             </View>
             <View className="flex flex-row items-center justify-between p-4">
               <Text className="text-2xl font-mBold">Hi, {customer && customer.firstName ? customer.firstName : customer?.emailAddress?.emailAddress} !</Text>
@@ -188,10 +192,12 @@ if (isLoading || isRefreshing) {
                 <Ionicons name="chevron-forward-outline" size={24} color="black" />
               </TouchableOpacity>
             </View>
-            <View className="px-4 mt-12">
-              <Text className="text-xl font-mBold mt-4">Recently Viewed</Text>
-              {/* recently viewed products that are stored in mmkv local storage */}
+            <View className="px-4 my-8">
+              <RecentlyViewedProducts />
             </View>
+
+            {/* Notification Preferences - Disabling now until we get it working in v2 */}
+            {/*
             <View className="px-4 mt-12">
               <Text className="text-xl font-mBold mt-4">Notification Preferences</Text>
               <Text className="text-base font-mRegular my-2">Please update your notification preferences as per your preference.</Text>
@@ -225,6 +231,8 @@ if (isLoading || isRefreshing) {
                 </View>
               </View>
             </View>
+      */}
+
             <View className="px-4 mt-12 flex flex-row items-center justify-between">
               <TouchableOpacity className="flex flex-row items-center justify-center gap-1 bg-darkPrimary px-4 py-2 rounded-lg" onPress={logout}>
                 <Ionicons name="log-out-outline" size={24} color="white" />

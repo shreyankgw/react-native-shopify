@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, TouchableOpacity, ScrollView, Image, Linking } from "react-native";
+import { View, Text, ActivityIndicator, TouchableOpacity, ScrollView, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/context/authContext";
 import { fetchCustomerOrderDetail } from "@/lib/shopifyQueries";
 import { useLocalSearchParams, router } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import formatPrice from "@/utilities/formatPrice";
+import { Image } from "expo-image";
 
 // ---- Types -----
 interface Address {

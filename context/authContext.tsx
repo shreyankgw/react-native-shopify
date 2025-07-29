@@ -68,7 +68,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const loadTokens = useCallback(async () => {
     setIsLoading(true);
     try{
-        const tokens = getTokens();
+        const tokens = await getTokens();
         if (tokens.accessToken && tokens.refreshToken && tokens.expiresAt) {
             setAccessToken(tokens.accessToken);
             setRefreshToken(tokens.refreshToken);
@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
           }
     }catch(error){
         console.error('Failed to load tokens', error);
-        clearTokens();
+        await clearTokens();
     }finally{
         setIsLoading(false);
     }
@@ -92,14 +92,13 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   }, [loadTokens]);
 
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
-          const currentTokens = getTokens();
+          const currentTokens = await getTokens();
           if (!currentTokens.refreshToken) {
             console.error('No refresh token available.');
             logout(); // Force logout if refresh fails
             return null;
           }
 
-          console.log('Attempting to refresh access token...');
           setIsLoading(true); // Indicate loading during refresh
           setIsRefreshing(true);
 
@@ -124,7 +123,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
             }
 
             console.log('token refresh successful.', data);
-            storeTokens(data.access_token, data.refresh_token, data.expires_in, data.id_token);
+            await storeTokens(data.access_token, data.refresh_token, data.expires_in, data.id_token);
             setAccessToken(data.access_token);
             setRefreshToken(data.refresh_token);
             setIdToken(data.id_token);
@@ -141,23 +140,26 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   }, []);
 
   const getValidAccessToken = useCallback(async (): Promise<string | null> => {
-    // Use state values first, but double-check expiry
-    const currentExpiresAt = expiresAt; // Read from state
-    const currentAccessToken = accessToken; // Read from state
+        const currentExpiresAt = expiresAt;
+        const currentAccessToken = accessToken;
 
-    console.log('token expiry time', new Date(currentExpiresAt).toISOString());
-    console.log('current time', new Date(Date.now()).toISOString());
+        if (currentAccessToken && currentExpiresAt && Date.now() < currentExpiresAt - 60000) {
+            return currentAccessToken;
+        }
 
-    if (currentAccessToken && currentExpiresAt && Date.now() < currentExpiresAt - 60000) { // 60 seconds buffer
-      console.log("Using existing valid access token.");
-      return currentAccessToken;
-    } else if (refreshToken) {
-        console.log("Access token expired or missing, attempting refresh...");
-      return await refreshAccessToken();
-    } else {
-        console.log("No valid access token or refresh token available.");
-      return null;
-    }
+        const tokens = await getTokens(); // fallback to stored tokens if needed
+        if (tokens.accessToken && tokens.expiresAt && Date.now() < tokens.expiresAt - 60000) {
+            setAccessToken(tokens.accessToken);
+            setExpiresAt(tokens.expiresAt);
+            setRefreshToken(tokens.refreshToken);
+            setIdToken(tokens.idToken);
+            return tokens.accessToken;
+        } else if (tokens.refreshToken) {
+            return await refreshAccessToken();
+        } else {
+            return null;
+        }
+
   }, [accessToken, refreshToken, expiresAt, refreshAccessToken]);
 
   const login = async (): Promise<void> => {
@@ -251,7 +253,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
           }
     
           console.log('Token exchange successful:', data);
-          storeTokens(data.access_token, data.refresh_token, data.expires_in, data.id_token);
+         await storeTokens(data.access_token, data.refresh_token, data.expires_in, data.id_token);
           setAccessToken(data.access_token);
           setRefreshToken(data.refresh_token);
           setExpiresAt(Date.now() + data.expires_in * 1000);
@@ -260,7 +262,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
       }catch(error){
         console.error('Error exchanging code for tokens:', error);
      
-      clearTokens(); // Ensure clean state on failure
+      await clearTokens(); // Ensure clean state on failure
       setAccessToken(null);
       setRefreshToken(null);
       setExpiresAt(null);
@@ -286,7 +288,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
         console.error("Error during logout:", error);
     }finally{
         console.log('Logging out...');
-        clearTokens();
+        await clearTokens();
         setAccessToken(null);
         setRefreshToken(null);
         setIdToken(null);

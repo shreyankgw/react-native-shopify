@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Dimensions, Image, Button, ScrollView, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, Dimensions, ScrollView, TouchableOpacity, SafeAreaView } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import Carousel from "react-native-reanimated-carousel";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -13,6 +13,8 @@ import JudgeMeReviewComponent from "@/components/JudgemeReviewComponent";
 import JudgeMeWriteReviewModal from "@/components/JudgemeReviewModal";
 import parseSpecificationString from "@/utilities/parseProductSpecifications";
 import { useCart } from "@/context/cartContext";
+import { Image } from "expo-image";
+import { addRecentlyViewedProduct } from "@/lib/storage";
 
 configureReanimatedLogger({
   strict: false
@@ -70,6 +72,9 @@ export default function Product() {
       try {
         const productVal = await fetchProduct(handle);
         setProduct(productVal);
+        if(productVal?.id){
+          addRecentlyViewedProduct(productVal.id);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -204,7 +209,7 @@ export default function Product() {
     {
       title: "Warranty Information",
       content: product?.warranty?.reference.field.reference.image.url && (
-        <Image source={{ uri: product.warranty.reference.field.reference.image.url }} className="w-40 h-40" resizeMode="contain" />
+        <View className="w-40 h-40"><Image source={{ uri: product.warranty.reference.field.reference.image.url }} contentFit="contain" style={{ width: '100%', height: '100%' }} accessibilityRole="image" /></View>
       ),
     },
     // Only include the "Product Specifications" section if there are rows to display
@@ -266,6 +271,8 @@ export default function Product() {
     },
   ].filter(section => section.content); // Remove empty sections
 
+  console.log('product id', product?.id);
+
 
   return (
     <SafeAreaView className="bg-white flex-1">
@@ -283,7 +290,7 @@ export default function Product() {
               marginHorizontal: 0
             }}
             onProgressChange={(progress, absoluteProgress) => setIndex(Math.round(absoluteProgress))}
-            renderItem={({ item }) => <View className="px-4"><Image source={{ uri: item }} className="w-full h-full rounded-lg mb-2" resizeMode="contain" /></View>}
+            renderItem={({ item }) => <View className="px-4 w-full h-full rounded-lg mb-2"><Image source={{ uri: item }} contentFit="contain" style={{ width: '100%', height: '100%' }} accessibilityRole="image" /></View>}
           />
           {product && product.images.edges.length > 1 && renderDots()}
         </View>
@@ -303,10 +310,8 @@ export default function Product() {
               onClose={() => setReviewModalVisible(false)}
             />
           </View>
-          <View className="flex flex-row items-baseline gap-2 mt-2">
-            <Text className={`text-2xl font-mSemiBold mt-2 text-left ${product && product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != 0.0 ? "text-red-600" : ""}`}>{product && formatPrice(product.priceRange.minVariantPrice.amount)}</Text>
-            {product && product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != 0.0 && <Text className="text-lg font-mSemiBold line-through mt-2 text-gray-400 text-left">{formatPrice(product.compareAtPriceRange.minVariantPrice.amount)}</Text>}
-          </View>
+          
+
           <View className="my-4">
             {accordionSections.map(section => (
               <View key={section.title}>
@@ -327,7 +332,18 @@ export default function Product() {
 
       </ScrollView>
       <View className="p-4 border-t border-gray-200 flex flex-row items-center justify-between">
-        <TouchableOpacity disabled={!canBuy || costcoOnly} onPress={() => { console.log("Buy Now Clicked") }} activeOpacity={1} className="bg-brandLight rounded-xl flex justify-center items-center min-h-[44px] flex-1 mr-4 disabled:opacity-50"><Text className="font-mBold text-lg">Buy Now</Text></TouchableOpacity>
+        {/* <TouchableOpacity disabled={!canBuy || costcoOnly} onPress={() => { console.log("Buy Now Clicked") }} activeOpacity={1} className="bg-brandLight rounded-xl flex justify-center items-center min-h-[44px] flex-1 mr-4 disabled:opacity-50"><Text className="font-mBold text-lg">Buy Now</Text></TouchableOpacity> */}
+
+        <View className="flex flex-row items-baseline gap-2 flex-1 mr-4">
+          <Text className={`text-2xl font-mBold ${product && product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != 0.0 ? "text-red-600" : "text-gray-900"}`}>
+            {product && formatPrice(product.priceRange.minVariantPrice.amount)}
+          </Text>
+          {product && product.compareAtPriceRange && product.compareAtPriceRange.minVariantPrice.amount != 0.0 && (
+            <Text className="text-lg font-mSemiBold line-through text-gray-400 ml-2">
+              {formatPrice(product.compareAtPriceRange.minVariantPrice.amount)}
+            </Text>
+          )}
+        </View>
         {canBuy && !costcoOnly && <GwtButton
           title={loading ? "Adding..." : "Add To Cart"}
           handlePress={async () => {

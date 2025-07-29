@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useRef, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, TextInput, Animated, ActivityIndicator, Image } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, TextInput, Animated, ActivityIndicator } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import { predictiveSearch } from "@/lib/shopifyQueries";
@@ -7,6 +7,7 @@ import debounce from "lodash.debounce";
 import SearchResultSection from "@/components/SearchResultSection";
 import * as Haptics from 'expo-haptics';
 import { FlatList } from "react-native-gesture-handler";
+import { Image } from "expo-image";
 
 interface SearchResult{
     products?: any[];
@@ -17,12 +18,12 @@ interface SearchResult{
 const TRENDING_SEARCHES = ["Lawn Mowers", "Chainsaws", "Snow Blowers", "Mini Bikes", "Batteries"];
 
 const POPULAR_CATEGORIES = [
-    { id: '1', name: 'Lawn Mowers', count: 234, imageSource: <Image source={require("@/assets/images/lawn_mower_icon.png")} resizeMode="contain" className="w-12 h-12" /> },
-    { id: '2', name: 'Chainsaws', count: 189, imageSource: <Image source={require("@/assets/images/chainsaw_icon.png")} resizeMode="contain" className="w-12 h-12" /> },
-    { id: '3', name: 'Hedge Trimmers', count: 156, imageSource: <Image source={require("@/assets/images/hedge_trimmer_icon.png")} resizeMode="contain" className="w-12 h-12" /> },
-    { id: '4', name: 'Pressure Washers', count: 302, imageSource: <Image source={require("@/assets/images/pressure_washer_icon.png")} resizeMode="contain" className="w-12 h-12" /> },
-    { id: '5', name: 'Vacuums', count: 278, imageSource: <Image source={require("@/assets/images/vaccums_icon.png")} resizeMode="contain" className="w-12 h-12" /> },
-    { id: '6', name: 'Batteries & Chargers', count: 415, imageSource: <Image source={require("@/assets/images/batteries_chargers_icon.png")} resizeMode="contain" className="w-12 h-12" /> },
+    { id: '1', name: 'Lawn Mowers', count: 234, imageSource: <Image source={require("@/assets/images/lawn_mower_icon.png")} contentFit="contain" style={{ width: '100%', height: '100%' }} transition={350} /> },
+    { id: '2', name: 'Chainsaws', count: 189, imageSource: <Image source={require("@/assets/images/chainsaw_icon.png")} contentFit="contain" style={{ width: '100%', height: '100%' }} transition={350} /> },
+    { id: '3', name: 'Hedge Trimmers', count: 156, imageSource: <Image source={require("@/assets/images/hedge_trimmer_icon.png")} contentFit="contain" style={{ width: '100%', height: '100%' }} transition={350} /> },
+    { id: '4', name: 'Pressure Washers', count: 302, imageSource: <Image source={require("@/assets/images/pressure_washer_icon.png")} contentFit="contain" style={{ width: '100%', height: '100%' }} transition={350} /> },
+    { id: '5', name: 'Vacuums', count: 278, imageSource: <Image source={require("@/assets/images/vaccums_icon.png")} contentFit="contain" style={{ width: '100%', height: '100%' }} transition={350} /> },
+    { id: '6', name: 'Batteries & Chargers', count: 415, imageSource: <Image source={require("@/assets/images/batteries_chargers_icon.png")} contentFit="contain" style={{ width: '100%', height: '100%' }} transition={350} /> },
 ];
 
 export default function Search() {
@@ -44,7 +45,7 @@ export default function Search() {
 
     const renderCategoryItem = ({item} : {item: any}) => (
         <TouchableOpacity className="flex-1 m-2 p-4 bg-white rounded-lg border border-gray-100 items-center" onPress={() => router.push(`/search/${item.name}`)}>
-            {item.imageSource}
+            <View className="w-12 h-12">{item.imageSource}</View>
             <Text className="text-base font-mSemiBold mt-2">{item.name}</Text>
             <Text className="text-sm text-gray-500">{item.count}+ results</Text>
         </TouchableOpacity>

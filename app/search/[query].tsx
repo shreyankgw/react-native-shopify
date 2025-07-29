@@ -1,9 +1,10 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, TouchableOpacity, Image, SafeAreaView } from "react-native";
+import { View, Text, ActivityIndicator, TouchableOpacity, SafeAreaView } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { searchPageResults } from "@/lib/shopifyQueries";
 import { FlashList } from "@shopify/flash-list";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 
 type SearchResult = {
   __typename: 'Product' | 'Page' | 'Article';
@@ -58,12 +59,15 @@ export default function Product() {
         onPress={() => { item.__typename === 'Product' && router.push(`/products/${item.handle}`) || item.__typename === 'Page' && router.push(`/collections/${item.handle}`) || item.__typename === 'Article' && router.push(`/`) }}
       >
         {item.__typename === 'Product' && item.featuredImage?.url && (
+          <View className="w-full aspect-square rounded-lg mb-2">
           <Image
-            className="w-full aspect-square rounded-lg mb-2"
             source={{ uri: item.featuredImage.url }}
-            resizeMode="contain"
+            contentFit="contain"
+            style={{ width: '100%' , height: '100%' }}
           />
+          </View>
         )}
+        
         <Text className="text-sm font-semibold mb-1 dark:text-white">
           {item.title}
         </Text>

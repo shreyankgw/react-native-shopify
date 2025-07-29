@@ -6,19 +6,18 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import formatPrice from "@/utilities/formatPrice";
 import { CheckoutCompletedEvent, useShopifyCheckoutSheet } from "@shopify/checkout-sheet-kit";
 import { Image } from "expo-image";
+
+
 export default function CartPage() {
-  const { cart, loading, removeFromCart, checkoutUrl, refreshCart, clearCart, setOrderDetails } = useCart();
+  const { cart, loading, removeFromCart, checkoutUrl, refreshCart, clearCart } = useCart();
   
   const shopifyCheckout = useShopifyCheckoutSheet();
 
   useEffect(() => {
     const unsub = shopifyCheckout.addEventListener('completed', (event: CheckoutCompletedEvent) => {
-      const orderID = event.orderDetails.id;
-      console.log('order details', event.orderDetails);
-      setOrderDetails(event.orderDetails);
       clearCart();
-      //after that send them to their order details page within the app or send them back to the homepage.
-      router.replace("/orderDetails");
+      //after that send them to homepage since they have already gotten confirmation for their order.
+      router.replace("/");
     });
     return () => {
       unsub?.remove();

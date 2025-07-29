@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import formatPrice from "@/utilities/formatPrice";
 import { calculatePercentageOff } from "@/utilities/percentOff";
 import FractionalStarRating from "./FractionalStarRating";
+import { Image } from "expo-image";
 
 
 export default function ProductCard({ product }: { product: any }) {
@@ -38,11 +39,14 @@ export default function ProductCard({ product }: { product: any }) {
             )}
           </Text>
         )}
+      <View className="w-full h-[200px] rounded-lg mb-2">
       <Image
         source={{ uri: product.featuredImage.url }}
-        className="w-full h-[200px] rounded-lg mb-2"
-        resizeMode="contain"
+        contentFit="contain"
+        style={{ width: '100%', height: '100%' }}
       />
+      </View>
+     
       <View className="flex flex-col items-start justify-between flex-1">
         {product.variants && (
           <Text className="text-xs font-mLight text-left">
