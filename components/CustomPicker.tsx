@@ -30,14 +30,7 @@ export default function CustomPicker({
       {label && <Text style={{ marginBottom: 4, color: "#4b5563" }}>{label}</Text>}
       <TouchableOpacity
         onPress={() => setModalVisible(true)}
-        style={{
-          borderWidth: 1,
-          borderColor: "#d1d5db",
-          borderRadius: 8,
-          paddingVertical: 12,
-          paddingHorizontal: 14,
-          backgroundColor: "#f3f4f6",
-        }}
+        className="px-4 py-2 border border-gray-300 focus:border-gray-500 bg-gray-100 rounded-lg"
       >
         <Text style={{ color: selectedValue ? "#222" : "#9ca3af" }}>{selectedLabel}</Text>
       </TouchableOpacity>

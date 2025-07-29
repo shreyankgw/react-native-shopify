@@ -68,6 +68,20 @@ export default function Support() {
               </View>
             </TouchableOpacity>
 
+            {/* Product Registration */}
+            <TouchableOpacity
+              className="flex-row items-center bg-brandText rounded-2xl p-4 mb-4"
+              onPress={() => router.push('/product-registration')}
+            >
+              <Ionicons name="clipboard-outline" size={28} color="#fff" />
+              <View className="ml-4">
+                <Text className="font-mSemiBold text-white text-lg">Product Registration</Text>
+                <Text className="text-gray-100 font-mRegular">
+                  Register your product for warranty & support
+                </Text>
+              </View>
+            </TouchableOpacity>
+
             {/* Business Hours */}
             <View className="bg-gray-50 rounded-2xl p-5 mt-6 mb-12 border border-gray-200 shadow-sm">
               <Text className="text-lg font-mSemiBold text-gray-800 mb-3 text-center">
