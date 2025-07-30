@@ -10,7 +10,7 @@ import { Image } from "expo-image";
 
 export default function CartPage() {
   const { cart, loading, removeFromCart, checkoutUrl, refreshCart, clearCart } = useCart();
-  
+
   const shopifyCheckout = useShopifyCheckoutSheet();
 
   useEffect(() => {
@@ -60,22 +60,22 @@ export default function CartPage() {
   // Helper function to render a cart line
   const renderCartLine = (line: any) => {
     const variant = line.node.merchandise;
-    
+
     return (
       <View
         key={line.node.id}
         className="flex-row items-center bg-white border border-gray-200 rounded-xl p-3 mb-4"
       >
         <View className="w-20 h-20 rounded-lg mr-4 bg-gray-100">
-         <Image
-          source={{ uri: variant.product?.featuredImage?.url || "https://cdn.shopify.com/s/files/1/0632/6331/0018/files/no-image.png" }}
-          style={{ width: '100%', height: '100%' }}
-          contentFit="cover"
-          transition={350}
-          accessibilityRole="image"
-        />
+          <Image
+            source={{ uri: variant.product?.featuredImage?.url || "https://cdn.shopify.com/s/files/1/0632/6331/0018/files/no-image.png" }}
+            style={{ width: '100%', height: '100%' }}
+            contentFit="cover"
+            transition={350}
+            accessibilityRole="image"
+          />
         </View>
-        
+
         <View className="flex-1">
           <Text className="text-base font-mSemiBold mb-1" numberOfLines={2}>
             {variant.product?.title || "Product"}
@@ -84,7 +84,7 @@ export default function CartPage() {
           <Text className={`${variant.compareAtPrice?.amount ? "text-red-700" : "text-gray-700"} font-mBold text-sm`}>
             {(formatPrice(variant.price?.amount ?? 0) ?? "$0.00")} {variant.compareAtPrice?.amount && <Text className="text-gray-400 line-through text-sm font-mSemiBold ml-2">{(formatPrice(variant.compareAtPrice?.amount ?? 0) ?? "$0.00")}</Text>}
           </Text>
-          
+
         </View>
         <TouchableOpacity
           className="ml-3"
@@ -111,7 +111,7 @@ export default function CartPage() {
           <View className="flex-row items-center justify-between mb-4">
             <Text className="text-lg font-mBold text-gray-700">Subtotal</Text>
             <Text className="text-lg font-mBold text-gray-700">
-              {cart.cost?.subtotalAmount?.amount ? formatPrice(cart.cost?.subtotalAmount?.amount ?? 0) : "$0.00" }
+              {cart.cost?.subtotalAmount?.amount ? formatPrice(cart.cost?.subtotalAmount?.amount ?? 0) : "$0.00"}
             </Text>
           </View>
           <Text className="text-sm text-gray-500 mb-2">
@@ -126,6 +126,15 @@ export default function CartPage() {
             disabled={!checkoutUrl}
           >
             <Text className="text-white text-base font-mBold">Checkout</Text>
+          </TouchableOpacity>
+
+          
+          <TouchableOpacity
+            className="bg-brandLight py-3 rounded-xl items-center mt-3"
+            onPress={() => router.replace("/")}
+            accessibilityLabel="Continue Shopping"
+          >
+            <Text className="text-brandText text-base font-mBold">Continue Shopping</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -1,10 +1,11 @@
 // ProductGrid.tsx
-import React, { useRef, useCallback, useState } from "react";
+import React, { useRef, useCallback, useState, useMemo } from "react";
 import { View, Text, Dimensions, TouchableOpacity, ActivityIndicator, FlatList } from "react-native";
 import ProductCard from "./ProductCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Checkbox from "expo-checkbox";
+import { FlashList } from "@shopify/flash-list";
 
 interface ProductGridProps {
   products: any[];
@@ -20,6 +21,17 @@ interface ProductGridProps {
 
 const { width } = Dimensions.get("window");
 
+// Utility to chunk array into rows
+function chunkProducts(arr: any[], size: number) {
+  if (!Array.isArray(arr)) return [];
+  const filtered = arr.filter((p) => p && p.id); // remove undefined/null/bad products
+  let chunks = [];
+  for (let i = 0; i < filtered.length; i += size) {
+    chunks.push(filtered.slice(i, i + size));
+  }
+  return chunks;
+}
+
 export default function ProductGrid({
   products,
   filters,
@@ -33,6 +45,9 @@ export default function ProductGrid({
 }: ProductGridProps) {
   const [bottomsheetContent, setBottomSheetContent] = useState<string | null>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
+
+  // Memoized chunked products
+  const rows = useMemo(() => chunkProducts(products, 2), [products]);
 
   const sortOptions = [
     { title: "Best Selling", value: "BEST_SELLING" },
@@ -64,12 +79,6 @@ export default function ProductGrid({
     bottomSheetRef.current?.expand();
   }, []);
 
-  const ProductData = ({ item }: any) => (
-    <View style={{ width: width / 2 - 20 }}>
-      <ProductCard product={item} />
-    </View>
-  );
-
   const backDrop = useCallback((props: any) => {
     return (
       <BottomSheetBackdrop
@@ -81,13 +90,29 @@ export default function ProductGrid({
     );
   }, []);
 
+const CARD_GAP = 4;
+const CARD_WIDTH = (width - CARD_GAP * 3 - 32) / 2; // adjust as needed for padding/gaps
+
+const ProductRow = ({ item: row, index: rowIndex }: { item: any[]; index: number }) => (
+  <View key={`row-${rowIndex}`} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 }}>
+    <View style={{ width: CARD_WIDTH, marginRight: CARD_GAP }}>
+      {row[0] ? <ProductCard product={row[0]} className="w-full" /> : <View style={{ width: CARD_WIDTH }} />}
+    </View>
+    <View style={{ width: CARD_WIDTH }}>
+      {row[1] ? <ProductCard product={row[1]} className="w-full" /> : <View style={{ width: CARD_WIDTH }} />}
+    </View>
+  </View>
+);
+
+
   return (
     <>
-      <FlatList data={products}
-        renderItem={ProductData}
-        numColumns={2}
-        keyExtractor={(product: any) => product.id}
-        columnWrapperStyle={{ justifyContent: "space-between", gap: 8 }}
+      <FlashList 
+        data={rows}
+        renderItem={ProductRow}
+        numColumns={1}
+        keyExtractor={(_, idx) => `product-row-${idx}`}
+        estimatedItemSize={CARD_WIDTH + CARD_GAP}
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={

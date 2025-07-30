@@ -58,7 +58,6 @@ export default function Product() {
   const { handle } = useLocalSearchParams();
   const [index, setIndex] = useState(0);
   const [reviewmodalvisible, setReviewModalVisible] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   const { addToCart, loading } = useCart();
 
@@ -350,9 +349,8 @@ export default function Product() {
             if (product && product.variants && product.variants.edges.length > 0) {
               const variantId = product.variants.edges[0].node.id;
               await addToCart(variantId, 1);
-              // Optional: toast, modal, etc.
-              setShowToast(true);
-              setTimeout(() => setShowToast(false), 3000);
+              // redirect to the cart page once its done adding to cart
+              router.push("/(tabs)/cart");
             }
           }}
           containerStyles="flex-1"
@@ -369,15 +367,6 @@ export default function Product() {
         />}
 
       </View>
-
-      {showToast && (
-        <View className="absolute bottom-32 left-0 right-0 items-center z-50">
-          <View className="bg-primary px-6 py-3 rounded-xl shadow flex flex-row justify-center items-center">
-            <Ionicons name="checkmark-circle-outline" size={20} color="#ffffff" className="mr-2" />
-            <Text className="text-white font-mBold">Added to cart!</Text>
-          </View>
-        </View>
-      )}
 
     </SafeAreaView>
   );

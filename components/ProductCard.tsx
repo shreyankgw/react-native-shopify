@@ -1,13 +1,15 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Dimensions } from "react-native";
 import { router } from "expo-router";
 import formatPrice from "@/utilities/formatPrice";
 import { calculatePercentageOff } from "@/utilities/percentOff";
 import FractionalStarRating from "./FractionalStarRating";
 import { Image } from "expo-image";
 
+const { width } = Dimensions.get("window");
 
-export default function ProductCard({ product }: { product: any }) {
+
+export default function ProductCard({ product, className = "" }: { product: any, className?: string }) {
    
    // Always parse, default to 0 if missing
   let ratingValue = 0;
@@ -26,7 +28,7 @@ export default function ProductCard({ product }: { product: any }) {
 
   return (
     <TouchableOpacity
-      className="bg-white border border-gray-200 rounded-lg p-4 items-start mb-4 gap-2 flex-1"
+      className={`bg-white border border-gray-200 rounded-lg p-4 items-start mb-4 gap-2 flex-1 ${className}`}
       onPress={() => router.push(`/products/${product.handle}`)}
       activeOpacity={0.8}
     >
