@@ -17,6 +17,7 @@ type CartContextType = {
   checkoutUrl: string | null;
   refreshCart: () => Promise<void>;
   clearCart: () => Promise<void>;
+  updateLineQuantity: (lineId: string, quantity: number) => Promise<void>;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -179,6 +180,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     [cartId]
   );
 
+  // Update line item quantity
+const handleUpdateLineQuantity = useCallback(
+  async (lineId: string, quantity: number) => {
+    if (!cartId) return;
+    setLoading(true);
+    try {
+      const updatedCart = await updateLinesFromCart(cartId, [{ id: lineId, quantity: quantity }]);
+      setCart(updatedCart);
+      setCheckoutUrl(updatedCart.checkoutUrl);
+    } catch (err) {
+      console.error("Error updating cart line:", err);
+    } finally {
+      setLoading(false);
+    }
+  },
+  [cartId]
+);
+
   // Clear cart if checkout is complete
   const clearCart = useCallback(async () => {
     await deleteCartId();
@@ -201,6 +220,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     checkoutUrl,
     refreshCart,
     clearCart,
+    updateLineQuantity: handleUpdateLineQuantity,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -32,15 +32,15 @@ export default function Support() {
               Need help? Reach our customer support below.
             </Text>
 
-            {/* Call Support */}
+            {/* Chat with Support */}
             <TouchableOpacity
-              className="flex-row items-center bg-brandLight rounded-2xl p-4 mb-4"
-              onPress={() => Linking.openURL('tel:18889096757')}
+              className="flex-row items-center bg-darkPrimary rounded-2xl p-4 mb-4"
+              onPress={() => Linking.openURL(chatURL)}
             >
-              <Ionicons name="call" size={28} color="#24272a" />
-              <View className="ml-4 font-mRegular">
-                <Text className="font-mSemiBold text-brandText text-lg">Call Us</Text>
-                <Text className="text-gray-700 font-mRegular">1-888-909-6757</Text>
+              <Ionicons name="chatbubbles" size={28} color="#ffffff" />
+              <View className="ml-4">
+                <Text className="font-mSemiBold text-white text-lg">Chat with Support</Text>
+                <Text className="text-gray-100 font-mRegular">Live Chat on Website</Text>
               </View>
             </TouchableOpacity>
 
@@ -53,18 +53,6 @@ export default function Support() {
               <View className="ml-4">
                 <Text className="font-mSemiBold text-white text-lg">Visit Website</Text>
                 <Text className="text-gray-100 font-mRegular">{supportWebsite.replace(/^https?:\/\//, '')}</Text>
-              </View>
-            </TouchableOpacity>
-
-            {/* Chat with Support */}
-            <TouchableOpacity
-              className="flex-row items-center bg-darkPrimary rounded-2xl p-4 mb-4"
-              onPress={() => Linking.openURL(chatURL)}
-            >
-              <Ionicons name="chatbubbles" size={28} color="#ffffff" />
-              <View className="ml-4">
-                <Text className="font-mSemiBold text-white text-lg">Chat with Support</Text>
-                <Text className="text-gray-100 font-mRegular">Live Chat on Website</Text>
               </View>
             </TouchableOpacity>
 
@@ -139,6 +127,18 @@ export default function Support() {
                 DUE TO HIGH VOLUME OF ORDERS, SHIPPING MAY BE DELAYED ON NEW ORDERS. WE ARE DOING OUR BEST TO PROCESS AND SHIP ORDERS AS QUICKLY AS POSSIBLE AND WE THANK YOU FOR YOUR PATIENCE AT THIS TIME.
               </Text>
             </View>
+
+            {/* Call Support */}
+            <TouchableOpacity
+              className="flex-row items-center bg-brandLight rounded-2xl p-4 mb-4"
+              onPress={() => Linking.openURL('tel:18889096757')}
+            >
+              <Ionicons name="call" size={28} color="#24272a" />
+              <View className="ml-4 font-mRegular">
+                <Text className="font-mSemiBold text-brandText text-lg">Call Us</Text>
+                <Text className="text-gray-700 font-mRegular">1-888-909-6757</Text>
+              </View>
+            </TouchableOpacity>
 
           </View>
         </ScrollView>

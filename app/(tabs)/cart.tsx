@@ -6,19 +6,21 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import formatPrice from "@/utilities/formatPrice";
 import { CheckoutCompletedEvent, useShopifyCheckoutSheet } from "@shopify/checkout-sheet-kit";
 import { Image } from "expo-image";
+import CartUpsells from "@/components/CartUpsells";
 
 
-export default function CartPage() {
-  const { cart, loading, removeFromCart, checkoutUrl, refreshCart, clearCart } = useCart();
+export default function CartPage(){
+  const { cart, loading, removeFromCart, checkoutUrl, refreshCart, clearCart, updateLineQuantity } = useCart();
 
   const shopifyCheckout = useShopifyCheckoutSheet();
 
   useEffect(() => {
     const unsub = shopifyCheckout.addEventListener('completed', (event: CheckoutCompletedEvent) => {
+
       clearCart();
-      //after that send them to homepage since they have already gotten confirmation for their order.
       router.replace("/");
     });
+
     return () => {
       unsub?.remove();
     };
@@ -30,6 +32,12 @@ export default function CartPage() {
     await removeFromCart(lineId);
     await refreshCart();
   };
+
+  // When user changes quantity:
+const handleChangeQuantity = async (lineId: string, newQuantity: number) => {
+  await updateLineQuantity(lineId, newQuantity);
+  await refreshCart(); // This will fetch the latest cart data and re-render the cart
+};
 
   const cartLines = cart?.lines?.edges || [];
   const cartIsEmpty = !cart || cartLines.length === 0;
@@ -60,6 +68,9 @@ export default function CartPage() {
   // Helper function to render a cart line
   const renderCartLine = (line: any) => {
     const variant = line.node.merchandise;
+    const quantity = line.node.quantity;
+
+    console.log(line.node.id);
 
     return (
       <View
@@ -80,7 +91,32 @@ export default function CartPage() {
           <Text className="text-base font-mSemiBold mb-1" numberOfLines={2}>
             {variant.product?.title || "Product"}
           </Text>
-          <Text className="text-gray-500 text-xs mb-2">Qty: {line.node.quantity}</Text>
+
+          {/* Quantity selector buttons */}
+          <View className="flex-row items-center mt-1 mb-2">
+            <TouchableOpacity
+              className={`w-8 h-8 rounded-full items-center justify-center ${quantity === 1 ? "bg-gray-100 opacity-50" : "bg-gray-200"}`}
+              onPress={async () => {
+                if (quantity > 1) await handleChangeQuantity(line.node.id, quantity - 1);;
+              }}
+              disabled={quantity === 1}
+              accessibilityLabel={quantity === 1 ? "Cannot decrease quantity below 1" : "Decrease quantity"}
+              accessibilityState={{ disabled: quantity === 1 }}
+            >
+              <Ionicons name="remove-outline" size={20} color={quantity === 1 ? "#bdbdbd" : "#24272a"} />
+            </TouchableOpacity>
+            <Text className="mx-4 font-mBold text-base">{quantity}</Text>
+            {/* Increase quantity button */}
+            <TouchableOpacity
+              className="w-8 h-8 rounded-full bg-gray-200 items-center justify-center"
+              onPress={async () => await handleChangeQuantity(line.node.id, quantity + 1)}
+              accessibilityLabel="Increase quantity"
+            >
+              <Ionicons name="add-outline" size={20} color="#24272a" />
+            </TouchableOpacity>
+
+          </View>
+
           <Text className={`${variant.compareAtPrice?.amount ? "text-red-700" : "text-gray-700"} font-mBold text-sm`}>
             {(formatPrice(variant.price?.amount ?? 0) ?? "$0.00")} {variant.compareAtPrice?.amount && <Text className="text-gray-400 line-through text-sm font-mSemiBold ml-2">{(formatPrice(variant.compareAtPrice?.amount ?? 0) ?? "$0.00")}</Text>}
           </Text>
@@ -91,7 +127,7 @@ export default function CartPage() {
           onPress={() => handleRemove(line.node.id)}
           accessibilityLabel="Remove from cart"
         >
-          <Ionicons name="trash-outline" size={20} color="#EF4444" />
+          <Ionicons name="trash-outline" size={20} color="#666666" />
         </TouchableOpacity>
       </View>
     );
@@ -105,6 +141,9 @@ export default function CartPage() {
       >
         <Text className="text-2xl font-mBold mb-6">Your Cart</Text>
         {cartLines.map(renderCartLine)}
+
+        {/* Cart Upsells */}
+        <CartUpsells />
 
         {/* Cart summary */}
         <View className="border-t border-gray-200 pt-4 mt-4">
@@ -128,7 +167,7 @@ export default function CartPage() {
             <Text className="text-white text-base font-mBold">Checkout</Text>
           </TouchableOpacity>
 
-          
+
           <TouchableOpacity
             className="bg-brandLight py-3 rounded-xl items-center mt-3"
             onPress={() => router.replace("/")}
